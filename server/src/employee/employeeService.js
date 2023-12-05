@@ -3,24 +3,32 @@ var key = '123456789trytryrtyr';
 var encryptor = require('simple-encryptor')(key);
 
 module.exports.createEmployeeDBService = (employeeDetails) => {
-    return new Promise(function myFn(resolve, reject) {
-        var employeeModelData = new employeeModel();
-        employeeModelData.firstname = employeeDetails.firstname;
-        employeeModelData.lastname = employeeDetails.lastname;
-        employeeModelData.email = employeeDetails.email;
-        employeeModelData.password = employeeDetails.password;
-        var encrypted = encryptor.encrypt(employeeDetails.password);
-        employeeModelData.password = encrypted;
+    return new Promise(async (resolve, reject) => {
+        try {
+            var employeeModelData = new mployeeModel({
+                firstname: employeeDetails.firstname,
+                lastname: employeeDetails.lastname,
+                email: employeeDetails.email,
+            });
 
-        employeeModelData.save(function resultHandle(error, result) {
-            if (error) {
-                reject(false);
+            if (employeeDetails.password) {
+                var encrypted = encryptor.encrypt(employeeDetails.password);
+                employeeModelData.password = encrypted;
             } else {
-                resolve(true);
+                reject({ error: "Password not provided" });
+                return;
             }
-        });
+
+            // Use await to wait for the save operation to complete
+            await employeeModelData.save();
+
+            resolve(true);
+        } catch (error) {
+            // Use reject to handle errors
+            reject({ error: "Unexpected error", details: error });
+        }
     });
-}
+};
 
 module.exports.loginEmployeeDBService = (employeeDetails) => {
     return new Promise(function myFn(resolve, reject) {

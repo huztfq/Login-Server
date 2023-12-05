@@ -9,8 +9,8 @@ app.use(cors({
     origin: "http://localhost:4200"
 }));
 
-const uri = 'mongodb://localhost:27017';
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const uri = 'mongodb://0.0.0.0:27017';
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 50000 });
 const dbName = 'avrox-pto';
 
 async function main() {
