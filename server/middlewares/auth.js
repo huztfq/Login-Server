@@ -1,27 +1,29 @@
-const { getUser } = require("../service/auth");
+const jwt = require("jsonwebtoken");
+const { verifyToken, getUser } = require("../service/auth");
 
-async function restrictToLoggedinUserOnly(req, res, next) {
-  const userUid = req.cookies?.uid;
+function authenticateToken(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
 
-  if (!userUid) return res.redirect("/login");
-  const user = getUser(userUid);
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized - No token provided." });
+  }
 
-  if (!user) return res.redirect("/login");
+  const decoded = verifyToken(token);
 
-  req.user = user;
-  next();
-}
+  if (!decoded) {
+    return res.status(401).json({ error: "Unauthorized - Invalid token." });
+  }
 
-async function checkAuth(req, res, next) {
-  const userUid = req.cookies?.uid;
+  const user = getUser(token);
 
-  const user = getUser(userUid);
+  if (!user) {
+    return res.status(401).json({ error: "Unauthorized - User not found." });
+  }
 
   req.user = user;
   next();
 }
 
 module.exports = {
-  restrictToLoggedinUserOnly,
-  checkAuth,
+  authenticateToken,
 };

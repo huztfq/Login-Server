@@ -16,13 +16,21 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     role: {
-      type: 'user' | 'admin',
-      required: true,
+      type: String,
+      enum: ["employee", "admin"],
+      default: "employee",
     },
+    joiningDate: {
+      type: Date,
+    },
+    designation: {
+      type: String
+    }
+
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
