@@ -8,19 +8,19 @@ const router = express.Router();
 
 // ROUTES FOR AUTHORZATION AND AUTHENTICATION
 
-router.post("/signup", handleUserSignup);
-router.post("/login", handleUserLogin);
-router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword);
-router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword);
-router.post("/logout", authMiddleware.authenticateToken, handleUserLogout);
+router.post("/signup", handleUserSignup);  //TESTED
+router.post("/login", handleUserLogin);  // TESTED
+router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword); //TESTED
+router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword); // NOT TESTED
+router.post("/logout", authMiddleware.authenticateToken, handleUserLogout); //TESTED
 
 // ROUTES FOR DATA ENTRY
 
-router.post("/attendance", authMiddleware.authenticateToken, createAttendance);
+router.post("/attendance", authMiddleware.authenticateToken, createAttendance); //NOT TESTED
 
 // ROUTES FOR FETCHING DATA
 
-router.get("/attendance", authMiddleware.authenticateToken, getDayAttendance);
+router.get("/attendance", authMiddleware.authenticateToken, getDayAttendance); // NOT TESTED
 
 
 module.exports = router;
