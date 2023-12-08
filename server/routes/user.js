@@ -13,7 +13,7 @@ router.post("/login", handleUserLogin);  // TESTED
 router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword); //TESTED
 router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword); // NOT TESTED
 router.post("/logout", authMiddleware.authenticateToken, handleUserLogout); //TESTED
-router.post("/info", handleInfo); // NOT TESTED
+router.get("/info", handleInfo); // TESTED
 
 // ROUTES FOR DATA ENTRY
 
