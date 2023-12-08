@@ -22,5 +22,4 @@ router.post("/attendance", authMiddleware.authenticateToken, createAttendance); 
 
 router.get("/attendance", authMiddleware.authenticateToken, getDayAttendance); // NOT TESTED
 
-
 module.exports = router;

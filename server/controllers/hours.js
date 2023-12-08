@@ -1,28 +1,31 @@
 const attendance = require("../models/attendance");
 
 const createAttendance = async (req, res) => {
-    try {
-      const { userId, date, status, leaveType, workLocation } = req.body;
-  
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
-      }
-        const attendance = new Attendance({
-        user: userId,
-        date,
-        status,
-        leaveType,
-        workLocation,
-      });
-  
-      await attendance.save();
-  
-      return res.status(201).json({ message: 'Attendance record created successfully', attendance });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+  try {
+    const { date, status, leaveType, workLocation } = req.body;
+    const userId = req.params.userId; 
+
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
     }
-  };
+
+    const attendance = new Attendance({
+      user: userId,
+      date,
+      status,
+      leaveType,
+      workLocation,
+    });
+
+    await attendance.save();
+
+    return res.status(201).json({ message: 'Attendance record created successfully', attendance });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
   const getDayAttendance = async (req, res) => {
     try {
