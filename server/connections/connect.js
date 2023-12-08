@@ -22,14 +22,4 @@ const connectToOnlineDB = async () => {
   }
 };
 
-const connectDB = async () => {
-  if (!process.env.MONGODB_CONNECT_URI) {
-    console.error('ERROR: Missing environment variable MONGODB_CONNECT_URI');
-    console.log('Attempting to connect to the local MongoDB server...');
-    await connectToOnlineDB(); 
-  } else {
-    await connectToOnlineDB();
-  }
-};
-
-module.exports = connectDB;
+module.exports = connectToOnlineDB;

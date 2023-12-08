@@ -2,7 +2,7 @@
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const connectDB  = require("../connections/connect");
+const connectToOnlineDB  = require("../connections/connect");
 const { restrictToLoggedinUserOnly, checkAuth } = require("../middlewares/auth");
 require('dotenv').config();
 
@@ -12,7 +12,7 @@ const app = express();
 const PORT = 8001;
 
 // Connect to MongoDB and set up other configurations
-connectDB();
+connectToOnlineDB();
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
