@@ -3,11 +3,11 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const { connectToMongoDB } = require("./connect");
-const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
+const { restrictToLoggedinUserOnly, checkAuth } = require("../middlewares/auth");
 require('dotenv').config();
 
 
-const userRoute = require("./routes/user");
+const userRoute = require("../routes/user");
 
 const app = express();
 const PORT = 8001;
