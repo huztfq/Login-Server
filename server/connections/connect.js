@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 
 const connectToOnlineDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_CONNECT_URI);
-    console.log('Database Server Connected');
+    const onlineURI = process.env.MONGODB_CONNECT_URI;
+    await mongoose.connect(onlineURI);
+    console.log('Connected to Cloud MongoDB Server');
   } catch (error) {
     console.error('ERROR:', error.message);
     console.log('Attempting to connect to the local MongoDB server...');
