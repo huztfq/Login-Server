@@ -158,7 +158,9 @@ async function handleUserLogout(req, res) {
   }
 }
 
-
+async function handleInfo(req, res) {
+  res.send('Welcome to Avrox');
+};
 
 
 
@@ -168,4 +170,5 @@ module.exports = {
   handleUserResetPassword,
   handleUserForgotPassword,
   handleUserLogout,
+  handleInfo,
 };
