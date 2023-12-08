@@ -2,36 +2,33 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 const connectToOnlineDB = async () => {
-  try {
-    const onlineURI = process.env.MONGODB_CONNECT_URI;
-    if (!onlineURI) {
-      throw new Error('MONGODB_CONNECT_URI is not defined in the environment variables.');
-    }
+  const maxAttempts = 5; // Set the maximum number of reconnection attempts
+  let attempts = 0;
 
-    await mongoose.connect(onlineURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log('Connected to Cloud MongoDB Server');
-  } catch (error) {
-    console.error('ERROR:', error.message);
-    console.log('Attempting to connect to the local MongoDB server...');
-
-    const localURI = 'mongodb://127.0.0.1:27017/avrox';
-
+  while (attempts < maxAttempts) {
     try {
-      await mongoose.connect(localURI, {
+      const onlineURI = process.env.MONGODB_CONNECT_URI;
+      if (!onlineURI) {
+        throw new Error('MONGODB_CONNECT_URI is not defined in the environment variables.');
+      }
+
+      await mongoose.connect(onlineURI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
 
-      console.log('Connected to Local MongoDB Server');
-    } catch (localError) {
-      console.error('ERROR:', localError.message);
-      process.exit(1);
+      console.log('Connected to Cloud MongoDB Server');
+      return; // Exit the function if connection is successful
+    } catch (error) {
+      console.error('ERROR:', error.message);
+      attempts++;
+      console.log(`Attempting to reconnect to the online MongoDB server. Attempt ${attempts} of ${maxAttempts}...`);
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Delay for 5 seconds before reattempt
     }
   }
+
+  console.error('Failed to connect to the online MongoDB server after multiple attempts.');
+  process.exit(1);
 };
 
 module.exports = connectToOnlineDB;
