@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Add a simple route handler for the root path
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("Welcome to the portal");
 });
 
