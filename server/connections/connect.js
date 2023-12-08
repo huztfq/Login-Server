@@ -1,19 +1,33 @@
 require('dotenv').config();
-
 const mongoose = require('mongoose');
 
-// Check if MONGO_CONNECT_URI is defined in .env
-if (!process.env.MONGODB_CONNECT_URI) {
-  console.error('ERROR: Missing environment variable MONGODB_CONNECT_URI');
-  process.exit(1);
-}
-
-const connectDB = async () => {
+const connectToOnlineDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_CONNECT_URI);
     console.log('Database Server Connected');
   } catch (error) {
     console.error('ERROR:', error.message);
+    console.log('Attempting to connect to the local MongoDB server...');
+
+    const localURI = 'mongodb://127.0.0.1:27017/avrox';
+
+    try {
+      await mongoose.connect(localURI);
+      console.log('Connected to Local MongoDB Server');
+    } catch (localError) {
+      console.error('ERROR:', localError.message);
+      process.exit(1);
+    }
+  }
+};
+
+const connectDB = async () => {
+  if (!process.env.MONGODB_CONNECT_URI) {
+    console.error('ERROR: Missing environment variable MONGODB_CONNECT_URI');
+    console.log('Attempting to connect to the local MongoDB server...');
+    await connectToOnlineDB(); 
+  } else {
+    await connectToOnlineDB();
   }
 };
 
