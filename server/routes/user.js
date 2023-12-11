@@ -15,12 +15,5 @@ router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPasswor
 router.post("/logout", authMiddleware.authenticateToken, handleUserLogout); //TESTED
 router.get("/info", handleInfo); // TESTED
 
-// ROUTES FOR DATA ENTRY
-
-router.post("/attendance", authMiddleware.authenticateToken, createAttendance); //NOT TESTED
-
-// ROUTES FOR FETCHING DATA
-
-router.get("/attendance", authMiddleware.authenticateToken, getDayAttendance); // NOT TESTED
 
 module.exports = router;

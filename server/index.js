@@ -8,7 +8,7 @@ const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
 require('dotenv').config();
 
 const userRoute = require("./routes/user");
-
+const userAttendace = require("./routes/attendance");
 const app = express();
 const PORT = 8001;
 
@@ -25,6 +25,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1", userRoute);
+
+app.use("/api/v1", userAttendace);
 
 // Set up other middleware and configurations as needed
 
