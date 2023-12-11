@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const connectToOnlineDB  = require("./connections/connect");
 const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
 require('dotenv').config();
-
+const cors = require("cors");
 const userRoute = require("./routes/user");
 
 const app = express();
@@ -18,6 +18,7 @@ connectToOnlineDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 
 // Add a simple route handler for the root path
 app.get("/", (req, res) => {
