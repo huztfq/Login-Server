@@ -3,7 +3,7 @@ import { MenuItem } from '../models/menu.model';
 export class Menu {
   public static pages: MenuItem[] = [
     {
-      group: 'Home',
+      group: 'Dashboard',
       separator: false,
       items: [
         {
@@ -11,7 +11,9 @@ export class Menu {
           label: 'Dashboard',
           route: '/dashboard',
           children: [
-            { label: 'Home', route: '/dashboard/home' },
+            { label: 'View Employees', route: '/dashboard/home' },
+            { label: 'Add New Employee', route: '/dashboard/add-employee' },
+            { label: 'View Paid Time Off', route: '/dashboard/view-pto' },
           ],
         },
         // {

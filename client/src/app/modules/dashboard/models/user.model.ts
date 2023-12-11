@@ -7,3 +7,13 @@ export interface IUser {
     totalDaysAbsent: Number,
     ptoRemaining: Number,
 }
+
+export interface ICreateUser {
+    id?: string,
+    name: string,
+    email: string,
+    password: string,
+    joiningDate: Date,
+    designation: string,
+    role: 'employee' | 'admin',
+}
