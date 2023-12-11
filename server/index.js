@@ -15,9 +15,6 @@ const PORT = 8001;
 // Connect to MongoDB and set up other configurations
 connectToOnlineDB();
 
-app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
