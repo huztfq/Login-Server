@@ -1,8 +1,9 @@
 // server.js
+require('dotenv').config(); 
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const connectDB  = require("./connections/connect");
+const connectToOnlineDB  = require("./connections/connect");
 const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
 require('dotenv').config();
 
@@ -12,10 +13,7 @@ const app = express();
 const PORT = 8001;
 
 // Connect to MongoDB and set up other configurations
-connectDB();
-
-app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
+connectToOnlineDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -26,7 +24,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the portal");
 });
 
-app.use("/user", userRoute);
+app.use("/api/v1", userRoute);
 
 // Set up other middleware and configurations as needed
 
