@@ -7,7 +7,7 @@ const connectToOnlineDB = async () => {
 
   while (attempts < maxAttempts) {
     try {
-      const onlineURI = process.env.MONGODB_CONNECT_URI;
+      const onlineURI = 'mongodb+srv://User1:avrox123@avrox.8hegjnp.mongodb.net/?retryWrites=true&w=majority';
       if (!onlineURI) {
         throw new Error('MONGODB_CONNECT_URI is not defined in the environment variables.');
       }
