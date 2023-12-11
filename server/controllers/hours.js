@@ -2,7 +2,7 @@ const Attendance = require("../models/attendance");
 
 const createAttendance = async (req, res) => {
   try {
-    const { date, status, leaveType} = req.body;
+    const { date, status, leaveType, workLocation } = req.body;
     const userId = req.params.userId; 
 
     if (!userId) {
@@ -14,6 +14,7 @@ const createAttendance = async (req, res) => {
       date,
       status,
       leaveType,
+      workLocation,
     });
 
     await attendance.save();

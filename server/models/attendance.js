@@ -19,6 +19,11 @@ const attendanceSchema = new mongoose.Schema(
       enum: ['casual', 'sick'],
       default: null,
     },
+    workLocation: {
+      type: String,
+      enum: ['remote', 'onsite'],
+      default: 'onsite',
+    },
   },
   { timestamps: true }
 );
