@@ -1,4 +1,4 @@
-const attendance = require("../models/attendance");
+const Attendance = require("../models/attendance");
 
 const createAttendance = async (req, res) => {
   try {
@@ -27,38 +27,38 @@ const createAttendance = async (req, res) => {
 };
 
 
-  const getDayAttendance = async (req, res) => {
-    try {
-      const { userId } = req.params; 
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
-      }
+const getDayAttendance = async (req, res) => {
+  try {
+    const { userId } = req.params; 
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
   
-      const user = await User.findById(userId);
+    const user = await User.findById(userId);
   
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
   
-      const totalDaysPresent = await Attendance.countDocuments({ user: userId, status: 'present' });
-      const totalDaysAbsent = await Attendance.countDocuments({ user: userId, status: 'absent' });
+    const totalDaysPresent = await Attendance.countDocuments({ user: userId, status: 'present' });
+    const totalDaysAbsent = await Attendance.countDocuments({ user: userId, status: 'absent' });
   
-      const totalWorkingHours = totalDaysPresent * 8;
+    const totalWorkingHours = totalDaysPresent * 8;
   
-      const earnedVacationPerHour = 0.038;
-      const ptoEarned = totalWorkingHours * earnedVacationPerHour;
+    const earnedVacationPerHour = 0.038;
+    const ptoEarned = totalWorkingHours * earnedVacationPerHour;
   
-      const dayAttendance = {
-        name: user.name,
-        joiningDate: user.createdAt,
-        totalDaysPresent,
-        totalDaysAbsent,
-        designation: user.role,
-        ptoRemaining: Math.floor(ptoEarned),
-      };
+    const dayAttendance = {
+      name: user.name,
+      joiningDate: user.createdAt,
+      totalDaysPresent,
+      totalDaysAbsent,
+      designation: user.role,
+      ptoRemaining: Math.floor(ptoEarned),
+    };
   
-      return res.status(200).json({ dayAttendance });
-    } catch (error) {
+    return res.status(200).json({ dayAttendance });
+  } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
