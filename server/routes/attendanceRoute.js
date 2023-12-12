@@ -2,14 +2,12 @@ const express = require("express");
 const {createAttendance, getDayAttendance} = require("../controllers/hours");
 const authMiddleware = require("../middlewares/auth");
 
-const router02 = express.Router();
+const router = express.Router();
 
 // ROUTES FOR DATA ENTRY
-
-router02.post("/attendance", authMiddleware.authenticateToken, createAttendance); //NOT TESTED
+router.post("/", authMiddleware.authenticateToken, createAttendance); //NOT TESTED
 
 // ROUTES FOR FETCHING DATA
+router.get("/", authMiddleware.authenticateToken, getDayAttendance); // NOT TESTED
 
-router02.get("/attendance", authMiddleware.authenticateToken, getDayAttendance); // NOT TESTED
-
-module.exports = router02;
+module.exports = router;
