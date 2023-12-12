@@ -24,9 +24,8 @@ app.get("/", (req, res) => {
   res.send("Welcome to the portal");
 });
 
-app.use("/api/v1", userRoute);
-
-app.use("/api/v1", userAttendace);
+app.use("/api/user", userRoute);
+app.use("/api/attendance", userAttendace);
 
 // Set up other middleware and configurations as needed
 
