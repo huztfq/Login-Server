@@ -4,9 +4,8 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const connectToOnlineDB  = require("./connections/connect");
-const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
-require('dotenv').config();
 const cors = require("cors");
+
 const userRoute = require("./routes/user");
 const userAttendace = require("./routes/attendanceRoute");
 const app = express();
