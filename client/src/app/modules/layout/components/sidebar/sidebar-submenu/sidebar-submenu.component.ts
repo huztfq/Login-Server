@@ -4,6 +4,7 @@ import { MenuService } from '../../../services/menu.service';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 
 @Component({
     selector: 'app-sidebar-submenu',
@@ -20,11 +21,14 @@ import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
     ],
 })
 export class SidebarSubmenuComponent implements OnInit {
-  @Input() public submenu = <SubMenuItem>{};
+  @Input() public declare submenu: SubMenuItem | undefined;
 
-  constructor(public menuService: MenuService) {}
+  constructor(public menuService: MenuService, private authService: AuthService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.submenu!.children = this.submenu?.children?.filter(item => item.access === this.authService.getUserRole());
+    console.log(this.submenu)
+  }
 
   public toggleMenu(menu: any) {
     this.menuService.toggleSubMenu(menu);

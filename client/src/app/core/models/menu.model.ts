@@ -10,6 +10,7 @@ export interface SubMenuItem {
   icon?: string;
   label?: string;
   route?: string | null;
+  access?: 'admin' | 'employee',
   expanded?: boolean;
   active?: boolean;
   children?: Array<SubMenuItem>;

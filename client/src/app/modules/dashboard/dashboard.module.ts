@@ -8,9 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { AddAttendaceComponent } from './pages/add-attendace/add-attendace.component';
 import { AddEmployeeComponent } from './pages/add-employee/add-employee.component';
 import { ViewPtoComponent } from './pages/view-pto/view-pto.component';
+import { AuthModule } from '../auth/auth.module';
+import { AuthService } from '../auth/services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthGuard } from './guards/auth.guard';
 
 @NgModule({
-  imports: [DashboardRoutingModule, CommonModule, FormsModule],
-  declarations: [HomeComponent, AddAttendaceComponent, AddEmployeeComponent, ViewPtoComponent]
+  imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule],
+  declarations: [HomeComponent, AddAttendaceComponent, AddEmployeeComponent, ViewPtoComponent],
+  providers: [AuthService, AuthGuard]
 })
 export class DashboardModule {}
