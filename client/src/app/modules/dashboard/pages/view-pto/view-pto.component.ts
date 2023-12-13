@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { IUser } from '../../models/user.model';
+import { IUser, IUserResponse } from '../../models/user.model';
+import { DashboardService } from '../../services/dashboard.service';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-view-pto',
@@ -7,14 +9,14 @@ import { IUser } from '../../models/user.model';
   styleUrl: './view-pto.component.scss'
 })
 export class ViewPtoComponent {
-  public employeeData: IUser = {
-    id: '0',
-    name: 'Inamullah Khan',
-    joiningDate: new Date('2023-01-01'),
-    designation: 'Software Engineer',
-    ptoRemaining: 10,
-    totalDaysPresent: 50,
-    totalDaysAbsent: 10
-  };
+  public declare employeeData: IUser;
+
+  constructor(private dashboardService: DashboardService, private authService: AuthService) {}
+
+  ngOnInit() {
+    this.dashboardService.getSingleEmployee(this.authService.getUserData()?.userId!).subscribe((res: IUserResponse) => {
+      this.employeeData = res.data;
+    })
+  }
 
 }

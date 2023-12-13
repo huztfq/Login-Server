@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ICreateUser } from '../../models/user.model';
+import { DashboardService } from '../../services/dashboard.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-employee',
@@ -16,4 +18,12 @@ export class AddEmployeeComponent {
     joiningDate: new Date(),
     designation: ''
   };
+
+  constructor(private dashboardService: DashboardService, private router: Router) {}
+
+  public createEmployee() {
+    this.dashboardService.createEmployee(this.userData).subscribe(res => {
+      this.router.navigate(['dashboard/home'])
+    })
+  }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IUser } from '../../models/user.model';
+import { IUser, IUsersResponse } from '../../models/user.model';
 import { Router } from '@angular/router';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
     selector: 'app-home',
@@ -8,67 +9,16 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  public users: IUser[] = [
-    {
-      id: '213',
-      name: 'Inam',
-      joiningDate: new Date(),
-      totalDaysPresent: 52,
-      totalDaysAbsent: 16,
-      designation: 'Full Stack Developer',
-      ptoRemaining: 2
-    },
-    {
-      id: '213',
-      name: 'Ghazan',
-      joiningDate: new Date(),
-      totalDaysPresent: 37,
-      totalDaysAbsent: 60,
-      designation: 'Full Stack Developer',
-      ptoRemaining: 5
-    },
-    {
-      id: '213',
-      name: 'Hamza',
-      joiningDate: new Date(),
-      totalDaysPresent: 90,
-      totalDaysAbsent: 70,
-      designation: 'Full Stack Developer',
-      ptoRemaining: 9
-    },
-    {
-      id: '213',
-      name: 'Huzaifa',
-      joiningDate: new Date(),
-      totalDaysPresent: 50,
-      totalDaysAbsent: 10,
-      designation: 'Full Stack Developer',
-      ptoRemaining: 5
-    },
-    {
-      id: '213',
-      name: 'Ammar',
-      joiningDate: new Date(),
-      totalDaysPresent: 90,
-      totalDaysAbsent: 10,
-      designation: 'Full Stack Developer',
-      ptoRemaining: 5
-    },
-    {
-      id: '213',
-      name: 'Moiz',
-      joiningDate: new Date(),
-      totalDaysPresent: 50,
-      totalDaysAbsent: 10,
-      designation: 'Full Stack Developer',
-      ptoRemaining: 5
-    },
-  ]
+  public users: IUser[] = []
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private dashboardService: DashboardService) {}
 
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.dashboardService.getAllEmployees().subscribe((res: IUsersResponse) => {
+      this.users = res.data;
+    })
+  }
 
   public addAttendance(id: string) {
     console.log(id);

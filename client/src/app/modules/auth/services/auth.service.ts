@@ -12,7 +12,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   public login(data: ILogin): Observable<ILoginResponse> {
-    return this.http.post<ILoginResponse>(APIURL + 'login', data);
+    return this.http.post<ILoginResponse>(APIURL + 'user/login', data);
   }
 
   public saveUserData(userData: ILoginResponse): void {

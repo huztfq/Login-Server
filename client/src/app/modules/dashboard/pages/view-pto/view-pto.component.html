@@ -1,40 +1,45 @@
-<div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
-    <div class="mb-6">
-      <h2 class="text-3xl font-bold mb-4">Employee Details</h2>
+<ng-container *ngIf="!employeeData;else showEmployee">
+<app-loading></app-loading>
+</ng-container>
+<ng-template #showEmployee>
+  <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+      <div class="mb-6">
+        <h2 class="text-3xl font-bold mb-4">Employee Details</h2>
+      </div>
+  
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+          <div class="text-lg">{{ employeeData.name }}</div>
+        </div>
+  
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Paid Time Off Remaining</label>
+          <div class="text-lg">{{ employeeData.ptoRemaining }} hours</div>
+        </div>
+  
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Designation</label>
+          <div class="text-lg">{{ employeeData.designation }}</div>
+        </div>
+  
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Joining Date</label>
+          <div class="text-lg">{{ employeeData.joiningDate | date }}</div>
+        </div>
+  
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Total Days Present</label>
+          <div class="text-lg">{{ employeeData.totalDaysPresent }}</div>
+        </div>
+  
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Total Days Absent</label>
+          <div class="text-lg">{{ employeeData.totalDaysAbsent }}</div>
+        </div>
+  
+      </div>
+  
     </div>
   
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-        <div class="text-lg">{{ employeeData.name }}</div>
-      </div>
- 
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Paid Time Off Remaining</label>
-        <div class="text-lg">{{ employeeData.ptoRemaining }} hours</div>
-      </div>
-
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Designation</label>
-        <div class="text-lg">{{ employeeData.designation }}</div>
-      </div>
- 
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Joining Date</label>
-        <div class="text-lg">{{ employeeData.joiningDate | date }}</div>
-      </div>
-
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Total Days Present</label>
-        <div class="text-lg">{{ employeeData.totalDaysPresent }}</div>
-      </div>
-
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Total Days Absent</label>
-        <div class="text-lg">{{ employeeData.totalDaysAbsent }}</div>
-      </div>
-  
-    </div>
-  
-  </div>
-  
+</ng-template>

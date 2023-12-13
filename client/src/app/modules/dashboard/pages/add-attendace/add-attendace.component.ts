@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { IUser } from '../../models/user.model';
+import { ISubmitAttendance, IUser, IUserResponse } from '../../models/user.model';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-add-attendace',
@@ -8,18 +10,20 @@ import { IUser } from '../../models/user.model';
 })
 export class AddAttendaceComponent {
   selectedDate: string = new Date().toISOString().split('T')[0];
-  attendanceStatus: string = 'present';
-  leaveType: string = 'casual';
-  workLocation: string = 'onsite';
+  attendanceStatus: 'present' | 'absent' = 'present';
+  leaveType: 'casual' | 'sick' | null = null;
+  workLocation: 'remote' | 'onsite' | null = null;
+  private id: string = ''
 
-  public employee: IUser = {
-    id: '213',
-    name: 'Moiz',
-    joiningDate: new Date(),
-    totalDaysPresent: 50,
-    totalDaysAbsent: 10,
-    designation: 'Full Stack Developer',
-    ptoRemaining: 5
+  public declare employee: IUser;
+
+  constructor(private route: ActivatedRoute, private router:Router, private dashboardService: DashboardService){}
+
+  ngOnInit() {
+    this.id = this.route.snapshot.params['id'];
+    this.dashboardService.getSingleEmployee(this.id).subscribe((res: IUserResponse) => {
+      this.employee = res.data;
+    })
   }
 
   onStatusChange() {
@@ -27,5 +31,18 @@ export class AddAttendaceComponent {
     if (this.attendanceStatus === 'present') {
       this.leaveType = 'casual';
     }
+  }
+
+  public submitAttendance() {
+    const attendace: ISubmitAttendance = {
+      date: this.selectedDate,
+      status: this.attendanceStatus,
+      leaveType: this.leaveType,
+      workLocation: this.workLocation
+    }
+
+    this.dashboardService.submitAttendance(attendace, this.id).subscribe((res) => {
+      this.router.navigate(['dashboard/home'])
+    })
   }
 }
