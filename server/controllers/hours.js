@@ -18,6 +18,7 @@ const calculateAttendance = async (user) => {
   const ptoEarned = totalWorkingHours * earnedVacationPerHour;
 
   return {
+    id: user._id,
     name: user.name,
     joiningDate: user.createdAt,
     totalDaysPresent,
@@ -33,7 +34,6 @@ const createAttendance = async (req, res) => {
   try {
     const { date, status, leaveType, workLocation } = req.body;
     const userId = req.params.id;
-    console.log(userId);
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
@@ -47,7 +47,6 @@ const createAttendance = async (req, res) => {
     });
 
     await attendance.save();
-
     return res
       .status(201)
       .json({ message: "Attendance record created successfully", attendance });
@@ -64,9 +63,7 @@ const getDayAttendance = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
-    console.log(userId);
     const user = await User.findById(userId);
-    console.log(user);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -91,7 +88,6 @@ const fetchAllUsersAttendance = async (req, res) => {
     });
 
     const userArray = (await Promise.all(userPromises)).filter(user => user.role != "admin");
-    console.log(userArray);
     res.status(200).json({ success: true, data: userArray });
   } catch (error) {
     console.error(error);
