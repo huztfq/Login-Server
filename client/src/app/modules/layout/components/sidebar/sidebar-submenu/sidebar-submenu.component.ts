@@ -22,11 +22,14 @@ import { AuthService } from 'src/app/modules/auth/services/auth.service';
 })
 export class SidebarSubmenuComponent implements OnInit {
   @Input() public declare submenu: SubMenuItem | undefined;
+  public declare filteredSubmenu: SubMenuItem | undefined;
 
   constructor(public menuService: MenuService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.submenu!.children = this.submenu?.children?.filter(item => item.access === this.authService.getUserRole());
+    this.filteredSubmenu = JSON.parse(JSON.stringify(this.submenu));
+    console.log(this.authService.getUserRole())
+    this.filteredSubmenu!.children = this.submenu?.children?.filter(item => item.access === this.authService.getUserRole());
     console.log(this.submenu)
   }
 

@@ -10,12 +10,19 @@ import { AddEmployeeComponent } from './pages/add-employee/add-employee.componen
 import { ViewPtoComponent } from './pages/view-pto/view-pto.component';
 import { AuthModule } from '../auth/auth.module';
 import { AuthService } from '../auth/services/auth.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './guards/auth.guard';
+import { AuthInterceptor } from '../auth/interceptors/auth.interceptor';
+import { DashboardService } from './services/dashboard.service';
+import { LoadingComponent } from '../layout/components/loading/loading.component';
 
 @NgModule({
-  imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule],
+  imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule, LoadingComponent],
   declarations: [HomeComponent, AddAttendaceComponent, AddEmployeeComponent, ViewPtoComponent],
-  providers: [AuthService, AuthGuard]
+  providers: [AuthService, DashboardService, AuthGuard,  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true,
+  },]
 })
 export class DashboardModule {}
