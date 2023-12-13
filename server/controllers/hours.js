@@ -18,7 +18,7 @@ const calculateAttendance = async (user) => {
   const ptoEarned = totalWorkingHours * earnedVacationPerHour;
 
   return {
-    id: user._id,
+    userId: user._id,
     name: user.name,
     joiningDate: user.createdAt,
     totalDaysPresent,
@@ -70,7 +70,7 @@ const getDayAttendance = async (req, res) => {
 
     const userAttendace = await calculateAttendance(user);
 
-    return res.status(200).json({ userAttendace });
+    res.status(200).json({ success: true, data: userAttendace });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
