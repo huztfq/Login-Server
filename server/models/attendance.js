@@ -22,7 +22,7 @@ const attendanceSchema = new mongoose.Schema(
     workLocation: {
       type: String,
       enum: ['remote', 'onsite'],
-      default: 'onsite',
+      default: null,
     },
   },
   { timestamps: true }

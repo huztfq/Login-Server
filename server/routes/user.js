@@ -5,7 +5,7 @@ const authMiddleware = require("../middlewares/auth");
 const router = express.Router();
 
 // ROUTES FOR AUTHORZATION AND AUTHENTICATION
-router.post("/signup", handleUserSignup);  //TESTED
+router.post("/signup", authMiddleware.authenticateToken, handleUserSignup);  //TESTED
 router.post("/login", handleUserLogin);  // TESTED
 router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword); //TESTED
 router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword); // NOT TESTED
