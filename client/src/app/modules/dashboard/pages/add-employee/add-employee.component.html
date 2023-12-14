@@ -8,7 +8,8 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
             <input type="text" class="appearance-none border rounded w-full py-2 px-3"
                    [(ngModel)]="userData.name" name="fullName" required pattern="[a-zA-Z]+">
-            <div *ngIf="employeeForm.controls['fullName'].invalid && (employeeForm.controls['fullName'].dirty || employeeForm.controls['fullName'].touched)">
+            <div *ngIf="employeeForm.controls['fullName'].invalid && (employeeForm.controls['fullName'].dirty || employeeForm.controls['fullName'].touched)"
+                 class="text-red-500">
                 Please enter a valid name (letters only).
             </div>
         </div>
@@ -24,7 +25,8 @@
             <input type="password" class="appearance-none border rounded w-full py-2 px-3"
                    [(ngModel)]="userData.password" name="password" required
                    pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$">
-            <div *ngIf="employeeForm.controls['password'].invalid && (employeeForm.controls['password'].dirty || employeeForm.controls['password'].touched)">
+            <div *ngIf="employeeForm.controls['password'].invalid && (employeeForm.controls['password'].dirty || employeeForm.controls['password'].touched)"
+                 class="text-red-500">
                 Password must contain one uppercase letter, one number, one special character, and be at least 8 characters long.
             </div>
         </div>
@@ -37,12 +39,13 @@
                 <option value="admin">Admin</option>
             </select>
         </div>
-        
+
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Joining Date</label>
             <input type="date" class="appearance-none border rounded w-full py-2 px-3"
                    [(ngModel)]="userData.joiningDate" name="joiningDate" required pattern="[0-9/-]+">
-            <div *ngIf="employeeForm.controls['joiningDate'].invalid && (employeeForm.controls['joiningDate'].dirty || employeeForm.controls['joiningDate'].touched)">
+            <div *ngIf="employeeForm.controls['joiningDate'].invalid && (employeeForm.controls['joiningDate'].dirty || employeeForm.controls['joiningDate'].touched)"
+                 class="text-red-500">
                 Please enter a valid joining date (numbers and /- only).
             </div>
         </div>
@@ -51,7 +54,8 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Designation</label>
             <input type="text" class="appearance-none border rounded w-full py-2 px-3"
                    [(ngModel)]="userData.designation" name="designation" required pattern="[a-zA-Z]+">
-            <div *ngIf="employeeForm.controls['designation'].invalid && (employeeForm.controls['designation'].dirty || employeeForm.controls['designation'].touched)">
+            <div *ngIf="employeeForm.controls['designation'].invalid && (employeeForm.controls['designation'].dirty || employeeForm.controls['designation'].touched)"
+                 class="text-red-500">
                 Please enter a valid designation (letters only).
             </div>
         </div>
