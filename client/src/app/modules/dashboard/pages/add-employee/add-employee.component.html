@@ -3,25 +3,36 @@
         <h2 class="text-2xl font-bold mb-4">Add New Employee</h2>
     </div>
 
-    <form>
+    <form #employeeForm="ngForm">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-            <input type="text" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="userData.name" name="fullName" required>
+            <input type="text" class="appearance-none border rounded w-full py-2 px-3"
+                   [(ngModel)]="userData.name" name="fullName" required pattern="[a-zA-Z]+">
+            <div *ngIf="employeeForm.controls['fullName'].invalid && (employeeForm.controls['fullName'].dirty || employeeForm.controls['fullName'].touched)">
+                Please enter a valid name (letters only).
+            </div>
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-            <input type="email" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="userData.email" name="email" required>
+            <input type="email" class="appearance-none border rounded w-full py-2 px-3"
+                   [(ngModel)]="userData.email" name="email" required>
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-            <input type="password" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="userData.password" name="password" required>
+            <input type="password" class="appearance-none border rounded w-full py-2 px-3"
+                   [(ngModel)]="userData.password" name="password" required
+                   pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$">
+            <div *ngIf="employeeForm.controls['password'].invalid && (employeeForm.controls['password'].dirty || employeeForm.controls['password'].touched)">
+                Password must contain one uppercase letter, one number, one special character, and be at least 8 characters long.
+            </div>
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Role</label>
-            <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="userData.role" name="role" required>
+            <select class="appearance-none border rounded w-full py-2 px-3"
+                    [(ngModel)]="userData.role" name="role" required>
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
             </select>
@@ -29,15 +40,23 @@
         
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Joining Date</label>
-            <input type="date" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="userData.joiningDate" name="joiningDate" required>
-            <!-- You can customize the appearance or use a third-party date picker library for a better UI/UX -->
+            <input type="date" class="appearance-none border rounded w-full py-2 px-3"
+                   [(ngModel)]="userData.joiningDate" name="joiningDate" required pattern="[0-9/-]+">
+            <div *ngIf="employeeForm.controls['joiningDate'].invalid && (employeeForm.controls['joiningDate'].dirty || employeeForm.controls['joiningDate'].touched)">
+                Please enter a valid joining date (numbers and /- only).
+            </div>
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Designation</label>
-            <input type="text" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="userData.designation" name="designation" required>
+            <input type="text" class="appearance-none border rounded w-full py-2 px-3"
+                   [(ngModel)]="userData.designation" name="designation" required pattern="[a-zA-Z]+">
+            <div *ngIf="employeeForm.controls['designation'].invalid && (employeeForm.controls['designation'].dirty || employeeForm.controls['designation'].touched)">
+                Please enter a valid designation (letters only).
+            </div>
         </div>
 
-        <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" (click)="createEmployee()">Submit</button>
+        <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" (click)="createEmployee()"
+                [disabled]="employeeForm.invalid">Submit</button>
     </form>
 </div>

@@ -28,6 +28,7 @@
     "@tailwindcss/typography": "^0.5.4",
     "angular-svg-icon": "^13.0.0",
     "apexcharts": "^3.44.2",
+    "ngx-toastr": "^18.0.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
