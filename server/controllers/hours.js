@@ -56,6 +56,36 @@ const createAttendance = async (req, res) => {
   }
 };
 
+// CREATE LEAVE
+const createLeave = async (req, res) => {
+  try {
+    const { date, leaveType } = req.body;
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    if (!['sick', 'casual', 'other'].includes(leaveType)) {
+      return res.status(400).json({ error: "Invalid leave type" });
+    }
+
+    const leaveRecord = new Attendance({
+      user: userId,
+      date,
+      status: 'leave', 
+      leaveType,
+    });
+
+    await leaveRecord.save();
+    return res
+      .status(201)
+      .json({ message: "Leave record created successfully", leaveRecord });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // Get Attendance Per Day
 const getDayAttendance = async (req, res) => {
   try {
@@ -95,7 +125,10 @@ const fetchAllUsersAttendance = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
+  createLeave,
   createAttendance,
   getDayAttendance,
   fetchAllUsersAttendance,
