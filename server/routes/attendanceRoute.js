@@ -7,6 +7,7 @@ const router = express.Router();
 // ROUTES FOR DATA ENTRY
 router.post("/createAtt/:id", authMiddleware.authenticateToken, createAttendance); // TESTED
 router.post("/createLeave/:id", authMiddleware.authenticateToken, createLeave); // Tested
+
 // ROUTES FOR FETCHING SINGLE DATA
 router.get("/getAtt/:id", authMiddleware.authenticateToken, getDayAttendance); //  TESTED
 
@@ -16,6 +17,5 @@ router.get("/allAtt", authMiddleware.authenticateToken, fetchAllUsersAttendance)
 // NEW ROUTES FOR FETCHING
 // SINGLE ENTRY
 router.get("/getAttendance/:id", authMiddleware.authenticateToken, getAttendance); //  TESTED
-
 
 module.exports = router;
