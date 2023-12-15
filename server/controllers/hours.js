@@ -219,7 +219,7 @@ function getWorkingDaysArray(startDate, endDate) {
   return workingDaysArray;
 }
 
-module.exports = {  
+module.exports = {
   createLeave,
   createAttendance,
   getDayAttendance,
