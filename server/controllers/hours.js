@@ -125,11 +125,104 @@ const fetchAllUsersAttendance = async (req, res) => {
   }
 };
 
+// Automate Attendance
+const getAttendance = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
 
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const today = new Date();
+    const joinDate = new Date(user.joiningDate);
+
+    const workingDaysArray = getWorkingDaysArray(joinDate, today);
+
+    const existingAttendance = await Attendance.find({
+      user: userId,
+      date: { $gte: joinDate, $lte: today },
+    });
+
+    const existingDates = existingAttendance.map((record) => record.date.toISOString());
+
+    const missingDates = workingDaysArray.filter(
+      (date) => !existingDates.includes(date.toISOString())
+    );
+
+    const missingAttendance = missingDates.map((date) => ({
+      user: userId,
+      date,
+      status: 'present',
+    }));
+
+    await Attendance.insertMany(missingAttendance);
+
+    const userAttendance = await Attendance.find({
+      user: userId,
+      date: { $gte: joinDate, $lte: today },
+    });
+
+    let daysPresent = 0;
+    let daysAbsent = 0;
+    let sickLeaves = 0;
+    let casualLeaves = 0;
+
+    userAttendance.forEach((attendance) => {
+      if (attendance.status === 'present') {
+        daysPresent++;
+      } else if (attendance.status === 'absent') {
+        daysAbsent++;
+      }
+
+      if (attendance.leaveType === 'sick') {
+        sickLeaves++;
+      } else if (attendance.leaveType === 'casual') {
+        casualLeaves++;
+      }
+    });
+
+    const attendanceSummary = {
+      _id: userId,
+      name: user.name,
+      daysPresent,
+      daysAbsent,
+      sickLeaves,
+      casualLeaves,
+    };
+
+    res.status(200).json({ success: true, data: attendanceSummary });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+function getWorkingDaysArray(startDate, endDate) {
+  const workingDaysArray = [];
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      workingDaysArray.push(new Date(currentDate));
+    }
+
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return workingDaysArray;
+}
 
 module.exports = {
   createLeave,
   createAttendance,
   getDayAttendance,
   fetchAllUsersAttendance,
+  getAttendance,
 };
