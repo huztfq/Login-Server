@@ -164,6 +164,25 @@ async function handleInfo(req, res) {
   res.send('Welcome to Avrox');
 }
 
+async function handleDeleteEmployees(req, res) {
+  try {
+    const { userId } = req.params;
+
+    // Check if the user making the request is an admin
+    const requestingUser = await User.findById(userId);
+    if (!requestingUser || requestingUser.role !== 'admin') {
+      return res.status(403).json({ error: "Permission denied. Only admins can perform this action." });
+    }
+
+    // Fetch all user IDs with the role 'employee' and delete them
+    const deletedUsers = await User.deleteMany({ role: 'employee' });
+
+    return res.json({ message: `Deleted ${deletedUsers.deletedCount} employee(s) successfully.` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error. Please try again later." });
+  }
+}
 
 
 module.exports = {
@@ -173,4 +192,5 @@ module.exports = {
   handleUserForgotPassword,
   handleUserLogout,
   handleInfo,
+  handleDeleteEmployees,
 };
