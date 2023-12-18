@@ -1,15 +1,16 @@
 const express = require("express");
-const { handleUserSignup, handleUserLogin, handleUserResetPassword, handleUserForgotPassword, handleUserLogout, handleInfo  } = require("../controllers/user");
+const { handleUserSignup, handleUserLogin, handleUserResetPassword, handleUserForgotPassword, handleUserLogout, handleInfo, handleDeleteEmployees} = require("../controllers/user");
 const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
 
 // ROUTES FOR AUTHORZATION AND AUTHENTICATION
-router.post("/signup", authMiddleware.authenticateToken, handleUserSignup);  //TESTED
-router.post("/login", handleUserLogin);  // TESTED
-router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword); //TESTED
-router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword); // NOT TESTED
-router.post("/logout", authMiddleware.authenticateToken, handleUserLogout); //TESTED
-router.get("/info", handleInfo); // TESTED
+router.post("/signup", authMiddleware.authenticateToken, handleUserSignup);
+router.post("/login", handleUserLogin);
+router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword);
+router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword);
+router.post("/logout", authMiddleware.authenticateToken, handleUserLogout);
+router.get("/info", handleInfo);
+router.post("/deleteEmployees/:userId", handleDeleteEmployees);
 
 module.exports = router;

@@ -5,9 +5,11 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const connectToOnlineDB  = require("./connections/connect");
 const cors = require("cors");
+const bodyParser = require('body-parser'); 
 
 const userRoute = require("./routes/user");
 const userAttendace = require("./routes/attendanceRoute");
+const leaveRoute = require("./routes/leave");
 const app = express();
 const PORT = 8001;
 
@@ -18,6 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Add a simple route handler for the root path
 app.get("/", (req, res) => {
@@ -26,6 +30,7 @@ app.get("/", (req, res) => {
 
 app.use("/user", userRoute);
 app.use("/attendance", userAttendace);
+app.use("/leave", leaveRoute);
 
 // Set up other middleware and configurations as needed
 

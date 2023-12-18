@@ -108,7 +108,6 @@ const getDayAttendance = async (req, res) => {
 };
 
 // GET Total Attendance
-
 const fetchAllUsersAttendance = async (req, res) => {
   try {
     const allUsers = await User.find();
