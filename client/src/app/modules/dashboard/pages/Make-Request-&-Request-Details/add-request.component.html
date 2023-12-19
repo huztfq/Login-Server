@@ -1,0 +1,27 @@
+<ng-container *ngIf="!leaveDetails; else showLeaveDetails">
+    <app-loading></app-loading>
+  </ng-container>
+  
+  <ng-template #showLeaveDetails>
+    <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4">Leave Details</h2>
+        <div class="flex items-center mb-2">
+          <span class="text-gray-700 text-sm font-bold mr-2">Leave ID:</span>
+          <span>{{ leaveDetails.leaveId }}</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <span class="text-gray-700 text-sm font-bold mr-2">Requested Date:</span>
+          <span>{{ leaveDetails.requestedDate }}</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <span class="text-gray-700 text-sm font-bold mr-2">Status:</span>
+          <span>{{ leaveDetails.status }}</span>
+        </div>
+      </div>
+        <div class="flex justify-end">
+        <button class="bg-primary-500 text-white py-2 px-4 rounded" (click)="makeLeaveRequest()">Make Request</button>
+      </div>
+    </div>
+  </ng-template>
+  

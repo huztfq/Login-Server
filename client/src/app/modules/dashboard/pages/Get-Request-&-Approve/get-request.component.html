@@ -1,0 +1,38 @@
+<ng-container *ngIf="!employee; else showEmployee">
+    <app-loading></app-loading>
+  </ng-container>
+  
+  <ng-template #showEmployee>
+    <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4">Employee Details</h2>
+        <div class="flex items-center mb-2">
+          <span class="text-gray-700 text-sm font-bold mr-2">Name:</span>
+          <span>{{ employee.name }}</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <span class="text-gray-700 text-sm font-bold mr-2">Designation:</span>
+          <span>{{ employee.designation }}</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <span class="text-gray-700 text-sm font-bold mr-2">PTO Remaining:</span>
+          <span>{{ employee.ptoRemaining }} days</span>
+        </div>
+      </div>
+        <div *ngIf="leaveDetails">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Requested Date</label>
+          <span>{{ leaveDetails.date }}</span>
+        </div>
+  
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Leave Type</label>
+          <span>{{ leaveDetails.leaveType }}</span>
+        </div>
+  
+        <button class="bg-primary-500 text-white py-2 px-4 rounded mr-2" (click)="approveLeave()">Approve</button>
+        <button class="bg-danger-500 text-white py-2 px-4 rounded" (click)="declineLeave()">Decline</button>
+      </div>
+    </div>
+  </ng-template>
+  
