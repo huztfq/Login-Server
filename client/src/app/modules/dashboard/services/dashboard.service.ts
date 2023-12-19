@@ -8,6 +8,13 @@ import { APIURL } from 'src/app/core/constants/api';
   providedIn: 'root'
 })
 export class DashboardService {
+  getLeaveDetailsById(id: string) {
+    throw new Error('Method not implemented.');
+  }
+  getEmployeeDetails: any;
+  getLeaveDetails: any;
+  approveLeave: any;
+  declineLeave: any;
 
   constructor(private http: HttpClient) { }
 

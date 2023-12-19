@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ISubmitAttendance, IUser, IUserResponse } from '../../models/user.model';
+import { ISubmitAttendanceResponse, IUser, IUserResponse } from '../../models/user.model';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 
@@ -34,7 +34,7 @@ export class AddAttendaceComponent {
   }
 
   public submitAttendance() {
-    const attendace: ISubmitAttendance = {
+    const attendace: ISubmitAttendanceResponse = {
       date: this.selectedDate,
       status: this.attendanceStatus,
       leaveType: this.leaveType,

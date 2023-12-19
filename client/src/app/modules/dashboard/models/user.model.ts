@@ -26,14 +26,6 @@ export interface ICreateUser {
     designation: string,
     role: 'employee' | 'admin',
 }
-
-export interface ISubmitAttendance {
-    date: string,
-    status: 'present' | 'absent',
-    leaveType?: 'casual' | 'sick' | null,
-    workLocation?: 'remote' | 'onsite' | null
-}
-
 export interface ISubmitAttendanceResponse {
     success: boolean,
     data: {
