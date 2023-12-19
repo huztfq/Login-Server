@@ -33,3 +33,23 @@ export interface ISubmitAttendance {
     leaveType?: 'casual' | 'sick' | null,
     workLocation?: 'remote' | 'onsite' | null
 }
+
+export interface ISubmitAttendanceResponse {
+    success: boolean,
+    data: {
+        date: string,
+        status: 'present' | 'absent',
+        leaveType?: 'casual' | 'sick' | null
+    }
+}
+
+export interface ILeaveRequest {
+    date: string,
+    leaveType: 'casual' | 'sick',
+    status: 'pending' | 'approved' | 'declined'
+}
+
+export interface ILeaveRequestResponse {
+    success: boolean,
+    data: ILeaveRequest
+}
