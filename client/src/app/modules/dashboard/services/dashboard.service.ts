@@ -37,8 +37,16 @@ export class DashboardService {
     return this.http.post(APIURL + `user/signup`, data);
   }
 
+  public getLeaveRequest(id: string){
+    return this.http.get(APIURL + `leave/getleave/${id}`);
+  }
 
+  public makeLeaveRequest(data: any){
+    return this.http.post(APIURL + `leave/createleave`, data);
+  } 
 
+  public approveLeaveRequest(id: string){
+    return this.http.get(APIURL + `leave/approveleave/${id}`);
+  }
 
-  
 }

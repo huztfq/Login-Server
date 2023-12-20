@@ -1,3 +1,4 @@
+// get-request.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
@@ -9,8 +10,10 @@ import { ILeaveRequest, ILeaveRequestResponse } from '../../models/user.model';
   styleUrls: ['./get-request.component.scss']
 })
 export class ApproveAttendanceComponent implements OnInit {
-  id: string = ''; 
+  id: string = '';
   leaveRequest: ILeaveRequest | null = null;
+  employee: any; 
+  leaveDetails: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,10 +32,20 @@ export class ApproveAttendanceComponent implements OnInit {
     this.dashboardService.getLeaveRequestById(this.id).subscribe(
       (response: ILeaveRequestResponse) => {
         this.leaveRequest = response.data;
+        this.employee = response.data.employee; 
+        this.leaveDetails = response.data.leaveDetails;
       },
       (error: any) => {
         console.error('Error fetching leave request details', error);
       }
     );
+  }
+
+  approveLeave() {
+
+  }
+
+  declineLeave() {
+
   }
 }
