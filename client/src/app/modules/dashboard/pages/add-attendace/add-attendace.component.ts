@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ISubmitAttendanceResponse, IUser, IUserResponse } from '../../models/user.model';
+import { ISubmitAttendance, ISubmitAttendanceResponse, IUser, IUserResponse } from '../../models/user.model';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 
@@ -34,16 +34,14 @@ export class AddAttendaceComponent {
   }
 
   public submitAttendance() {
-    const attendace: ISubmitAttendanceResponse = {
-      success: true,
-      data: {
+    const data: ISubmitAttendance = {
+      userId: this.id,
       date: this.selectedDate,
-      status: this.attendanceStatus,
       leaveType: this.leaveType,
-      }
-    }
+      status: this.attendanceStatus,
 
-    this.dashboardService.submitAttendance(attendace, this.id).subscribe((res) => {
+    }
+    this.dashboardService.submitAttendance(data, this.id).subscribe((res) => {
       this.router.navigate(['dashboard/home'])
     })
   }

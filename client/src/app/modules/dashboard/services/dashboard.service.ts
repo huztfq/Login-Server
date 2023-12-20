@@ -8,12 +8,7 @@ import { APIURL } from 'src/app/core/constants/api';
   providedIn: 'root'
 })
 export class DashboardService {
-  getLeaveRequestById(id: string) {
-    throw new Error('Method not implemented.');
-  }
-  getLeaveDetailsById(id: string) {
-    throw new Error('Method not implemented.');
-  }
+
   getEmployeeDetails: any;
   getLeaveDetails: any;
   approveLeave: any;
@@ -49,4 +44,10 @@ export class DashboardService {
     return this.http.get(APIURL + `leave/approveleave/${id}`);
   }
 
+  getLeaveRequestById(id: string) {
+    throw new Error('Method not implemented.');
+  }
+  getLeaveDetailsById(id: string) {
+    throw new Error('Method not implemented.');
+  }
 }

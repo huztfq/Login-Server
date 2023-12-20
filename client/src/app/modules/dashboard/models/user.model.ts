@@ -31,6 +31,7 @@ export interface IUser {
     userId: string;
     date: string;
     leaveType?: 'casual' | 'sick' | null;
+    status?: "present" | "absent"
   }
   
   export interface ISubmitAttendanceResponse {
