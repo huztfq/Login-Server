@@ -47,6 +47,7 @@ export class DashboardService {
   getLeaveRequestById(id: string) {
     return this.http.get(APIURL + `leave/leaveRequestsForAdmin//${id}`);
   }
+  
   getLeaveDetailsById(id: string) {
     return this.http.get(APIURL + `leave/leaveRequests/${id}`);
   }

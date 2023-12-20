@@ -30,17 +30,21 @@ export class ApproveAttendanceComponent implements OnInit {
 
   getLeaveRequestDetails() {
     this.dashboardService.getLeaveRequestById(this.id).subscribe(
-      (response: ILeaveRequestResponse) => {
-        this.leaveRequest = response.data;
-        this.employee = response.data.employee; 
-        this.leaveDetails = response.data.leaveDetails;
+      (response: any) => {
+        if ('data' in response) {
+          this.leaveRequest = response.data;
+          this.employee = response.data.employee; 
+          this.leaveDetails = response.data.leaveDetails;
+        } else {
+          console.error('Invalid response format:', response);
+        }
       },
       (error: any) => {
         console.error('Error fetching leave request details', error);
       }
     );
   }
-
+  
   approveLeave() {
 
   }
