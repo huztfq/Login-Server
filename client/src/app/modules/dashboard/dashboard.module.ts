@@ -15,8 +15,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { AuthInterceptor } from '../auth/interceptors/auth.interceptor';
 import { DashboardService } from './services/dashboard.service';
 import { LoadingComponent } from '../layout/components/loading/loading.component';
-import { AddRequestComponent } from './pages/Make-Request-&-Request-Details/add-request.component';
-import { ApproveAttendanceComponent } from './pages/Get-Request-&-Approve/get-request.component';
+import { AddRequestComponent } from './pages/make-request-and-request-details/add-request.component';
+import { ApproveAttendanceComponent } from './pages/get-Request-and-approve/get-request.component';
 
 @NgModule({
   imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule, LoadingComponent],

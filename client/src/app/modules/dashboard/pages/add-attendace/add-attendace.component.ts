@@ -35,10 +35,12 @@ export class AddAttendaceComponent {
 
   public submitAttendance() {
     const attendace: ISubmitAttendanceResponse = {
+      success: true,
+      data: {
       date: this.selectedDate,
       status: this.attendanceStatus,
       leaveType: this.leaveType,
-      workLocation: this.workLocation
+      }
     }
 
     this.dashboardService.submitAttendance(attendace, this.id).subscribe((res) => {

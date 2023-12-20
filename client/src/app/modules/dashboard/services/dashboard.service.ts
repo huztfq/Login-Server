@@ -8,6 +8,9 @@ import { APIURL } from 'src/app/core/constants/api';
   providedIn: 'root'
 })
 export class DashboardService {
+  getLeaveRequestById(id: string) {
+    throw new Error('Method not implemented.');
+  }
   getLeaveDetailsById(id: string) {
     throw new Error('Method not implemented.');
   }
@@ -34,4 +37,8 @@ export class DashboardService {
     return this.http.post(APIURL + `user/signup`, data);
   }
 
+
+
+
+  
 }
