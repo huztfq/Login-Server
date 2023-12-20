@@ -41,13 +41,14 @@ export class DashboardService {
   } 
 
   public approveLeaveRequest(id: string){
-    return this.http.get(APIURL + `leave/approveleave/${id}`);
+    return this.http.get(APIURL + `leave/approveLeaveRequestByAdmin/${id}`);
   }
 
   getLeaveRequestById(id: string) {
-    throw new Error('Method not implemented.');
+    return this.http.get(APIURL + `leave/leaveRequestsForAdmin//${id}`);
   }
   getLeaveDetailsById(id: string) {
-    throw new Error('Method not implemented.');
+    return this.http.get(APIURL + `leave/leaveRequests/${id}`);
   }
+
 }

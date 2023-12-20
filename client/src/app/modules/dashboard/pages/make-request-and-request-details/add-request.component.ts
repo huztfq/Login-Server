@@ -15,7 +15,7 @@ export class AddRequestComponent implements OnInit {
     date: '',
     leaveType: null
   };
-  leaveDetails: any; // Adjust the type accordingly
+  leaveDetails: any; 
 
   constructor(
     private route: ActivatedRoute,
@@ -30,7 +30,6 @@ export class AddRequestComponent implements OnInit {
   }
 
   submitAttendance() {
-    // Assuming you have a method to retrieve leave details based on the submitted attendance
     this.dashboardService.getLeaveDetails(this.attendance.userId, this.attendance.date).subscribe(
       (details: any) => {
         this.leaveDetails = details;
@@ -41,11 +40,9 @@ export class AddRequestComponent implements OnInit {
     );
     }
   makeLeaveRequest() {
-    // Assuming you have a method to make a leave request based on leave details
     this.dashboardService.makeLeaveRequest(this.leaveDetails).subscribe(
       (response) => {
-        // Handle the response as needed
-      },
+        console.log('Leave request made successfully', response);      },
       (error: any) => {
         console.error('Error making leave request', error);
       }
