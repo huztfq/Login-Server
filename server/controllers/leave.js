@@ -51,13 +51,6 @@ const createSickLeave = async (req, res) => {
 
 const getLeaveRequestsForAdmin = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    const requestingUser = await User.findById(userId);
-    if (!requestingUser || requestingUser.role !== 'admin') {
-      return res.status(403).json({ message: 'Permission denied' });
-    }
-
     const employees = await User.find({ role: 'employee' });
     const employeeIds = employees.map((employee) => employee._id);
 

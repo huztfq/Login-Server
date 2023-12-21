@@ -5,7 +5,7 @@ const authMiddleware = require("../middlewares/auth");
 const router = express.Router();
 
 router.post("/createLeave/:userId", authMiddleware.authenticateToken, createSickLeave);
-router.get("/leaveRequestsForAdmin/:userId", authMiddleware.authenticateToken, getLeaveRequestsForAdmin);
+router.get("/leaveRequestsForAdmin", authMiddleware.authenticateToken, getLeaveRequestsForAdmin);
 router.get("/leaveRequests/:userId", authMiddleware.authenticateToken, getUserLeaveRequests); 
 router.post("/approveLeaveRequestByAdmin/:userId", authMiddleware.authenticateToken, approveLeaveRequestByAdmin);
 
