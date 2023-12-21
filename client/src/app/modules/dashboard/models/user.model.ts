@@ -44,6 +44,9 @@ export interface IUser {
   }
   
   export interface ILeaveRequest {
+    _id: string;
+    startDate: Date;
+    leaveType: string;
     leaveId: string;
     requestedDate: string;
     status: 'pending' | 'approved' | 'declined';

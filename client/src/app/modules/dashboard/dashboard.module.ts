@@ -16,11 +16,11 @@ import { AuthInterceptor } from '../auth/interceptors/auth.interceptor';
 import { DashboardService } from './services/dashboard.service';
 import { LoadingComponent } from '../layout/components/loading/loading.component';
 import { AddRequestComponent } from './pages/make-request-and-request-details/add-request.component';
-import { ApproveAttendanceComponent } from './pages/get-Request-and-approve/get-request.component';
+import { GetRequestComponent } from './pages/get-Request-and-approve/get-request.component';
 
 @NgModule({
   imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule, LoadingComponent],
-  declarations: [HomeComponent, AddAttendaceComponent, AddEmployeeComponent, ViewPtoComponent, AddRequestComponent, ApproveAttendanceComponent],
+  declarations: [HomeComponent, AddAttendaceComponent, AddEmployeeComponent, ViewPtoComponent, AddRequestComponent, GetRequestComponent],
   providers: [AuthService, DashboardService, AuthGuard,  {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,

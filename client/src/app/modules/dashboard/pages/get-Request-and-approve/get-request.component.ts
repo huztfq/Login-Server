@@ -1,55 +1,54 @@
 // get-request.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
-import { ILeaveRequest, ILeaveRequestResponse } from '../../models/user.model';
+import { ILeaveRequest } from '../../models/user.model';
 
 @Component({
   selector: 'app-get-request',
   templateUrl: './get-request.component.html',
   styleUrls: ['./get-request.component.scss']
 })
-export class ApproveAttendanceComponent implements OnInit {
-  id: string = '';
-  leaveRequest: ILeaveRequest | null = null;
-  employee: any; 
-  leaveDetails: any;
+export class GetRequestComponent implements OnInit {
+  leaveRequests: ILeaveRequest[] = [];
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private dashboardService: DashboardService
-  ) {}
+  constructor(private route: ActivatedRoute, private dashboardService: DashboardService) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params: any) => {
-      this.id = params.get('id') || '';
-      this.getLeaveRequestDetails();
-    });
+  ngOnInit() {
+    this.fetchLeaveRequests();
   }
-
-  getLeaveRequestDetails() {
-    this.dashboardService.getLeaveRequestById(this.id).subscribe(
+  fetchLeaveRequests() {
+    this.dashboardService.getLeaveRequestById().subscribe(
       (response: any) => {
-        if ('data' in response) {
-          this.leaveRequest = response.data;
-          this.employee = response.data.employee; 
-          this.leaveDetails = response.data.leaveDetails;
+        if (response.success) {
+          this.leaveRequests = response.data;
         } else {
-          console.error('Invalid response format:', response);
+          console.error('Failed to fetch leave requests');
         }
       },
-      (error: any) => {
-        console.error('Error fetching leave request details', error);
+      (error) => {
+        console.error('Error fetching leave requests', error);
       }
     );
   }
-  
-  approveLeave() {
 
+  approveLeave(leaveId: string) {
+    this.dashboardService.approveLeaveRequest(leaveId).subscribe(
+      (response: any) => {
+        if (response.success) {
+          console.log('Leave request approved successfully');
+          // Optionally, update the local data to reflect the change
+        } else {
+          console.error('Failed to approve leave request');
+        }
+      },
+      (error) => {
+        console.error('Error approving leave request', error);
+      }
+    );
   }
 
-  declineLeave() {
-
+  declineLeave(leaveId: string) {
+    // Similar to approveLeave, implement the logic for declining leave request
   }
 }

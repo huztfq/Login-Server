@@ -6,7 +6,7 @@ import { AddAttendaceComponent } from './pages/add-attendace/add-attendace.compo
 import { AddEmployeeComponent } from './pages/add-employee/add-employee.component';
 import { ViewPtoComponent } from './pages/view-pto/view-pto.component';
 import { AddRequestComponent } from './pages/make-request-and-request-details/add-request.component';
-import { ApproveAttendanceComponent } from './pages/get-Request-and-approve/get-request.component';
+import { GetRequestComponent } from './pages/get-Request-and-approve/get-request.component';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
@@ -19,8 +19,8 @@ const routes: Routes = [
       { path: 'add-attendance/:id', component: AddAttendaceComponent, canActivate: [AuthGuard], data: { roles: ['admin'] } },
       { path: 'add-employee', component: AddEmployeeComponent, canActivate: [AuthGuard], data: { roles: ['admin'] } },
       { path: 'view-pto', component: ViewPtoComponent, canActivate: [AuthGuard], data: { roles: ['admin', 'employee'] }},
-      { path: 'view-requests', component: AddRequestComponent, canActivate: [AuthGuard], data: { roles: ['admin'] }},
-      { path: 'request', component: ApproveAttendanceComponent, canActivate: [AuthGuard], data: { roles: ['employee'] }},
+      { path: 'view-requests', component: GetRequestComponent, canActivate: [AuthGuard], data: { roles: ['admin'] }},
+      { path: 'request', component: AddRequestComponent, canActivate: [AuthGuard], data: { roles: ['employee'] }},
 
       { path: '**', redirectTo: 'error/404' },
     ],
