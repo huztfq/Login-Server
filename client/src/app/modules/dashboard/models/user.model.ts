@@ -33,6 +33,12 @@ export interface IUser {
     leaveType?: 'casual' | 'sick' | null;
     status?: "present" | "absent"
   }
+  export interface ISubmitRequest{
+    date: string;
+    leaveType?: 'casual' | 'sick' | null;
+    status?: "present" | "absent"
+  }
+
   
   export interface ISubmitAttendanceResponse {
     success: boolean;
@@ -43,16 +49,15 @@ export interface IUser {
     };
   }
   
-  export interface ILeaveRequest {
+export interface ILeaveRequest {
+  _id: string;
+  user: {
     _id: string;
-    startDate: Date;
-    leaveType: string;
-    leaveId: string;
-    requestedDate: string;
-    status: 'pending' | 'approved' | 'declined';
-    employee: any; 
-    leaveDetails: any; 
-  }
+    name: string;
+    designation: string;
+  };
+  status: 'pending' | 'approved' | 'declined';
+}
   
   export interface ILeaveRequestResponse {
     success: boolean;

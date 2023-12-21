@@ -40,20 +40,21 @@ export class DashboardService {
     return this.http.get<ILeaveRequest>(url);
   }
 
-  public makeLeaveRequest(data: any){
-    return this.http.post(APIURL + `leave/createleave`, data);
-  } 
+  public makeLeaveRequest(userId: string, data: any) {
+    return this.http.post(APIURL + `leave/createLeave/${userId}`, data);
+  }
 
-  public approveLeaveRequest(id: string){
-    return this.http.get(APIURL + `leave/approveLeaveRequestByAdmin/${id}`);
+  public approveLeaveRequest(leaveID: string, status: 'approved' | 'declined') {
+    const requestBody = { leaveID, status };
+  
+    return this.http.post(`${APIURL}leave/approveLeaveRequestByAdmin`, requestBody);
   }
 
   getLeaveRequestById() {
     return this.http.get(APIURL + `leave/leaveRequestsForAdmin`);
   }
   
-  getLeaveDetailsById(id: string) {
-    return this.http.get(APIURL + `leave/leaveRequests/${id}`);
+  getLeaveDetailsById(userId: string) {
+    return this.http.get(APIURL + `leave/leaveRequests/${userId}`);
   }
-
 }

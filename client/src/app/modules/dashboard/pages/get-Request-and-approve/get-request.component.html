@@ -1,28 +1,32 @@
 <!-- get-request.component.html -->
-<div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
-  <h2 class="text-2xl font-bold mb-4">Leave Requests</h2>
 
-  <table class="table">
+<div class="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+  <h2 class="text-3xl font-bold mb-6 text-center">Leave Requests</h2>
+
+  <table class="w-full table-fixed">
     <thead>
-      <tr>
-        <th>Leave ID</th>
-        <th>Requested Date</th>
-        <th>Leave Type</th>
-        <th>Status</th>
-        <th>Action</th>
+      <tr class="border-b-2">
+        <th class="w-1/6 py-3">Name</th>
+        <th class="w-1/6 py-3">Status</th>
+        <th class="w-1/6 py-3">Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let request of leaveRequests">
-        <td>{{ request._id }}</td>
-        <td>{{ request.startDate | date: 'shortDate' }}</td>
-        <td>{{ request.leaveType }}</td>
-        <td>{{ request.status }}</td>
-        <td>
-          <button class="bg-primary-500 text-white py-2 px-4 rounded mr-2" (click)="approveLeave(request._id)">Approve</button>
-          <button class="bg-danger-500 text-white py-2 px-4 rounded" (click)="declineLeave(request._id)">Decline</button>
-        </td>
-      </tr>
+      <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
+        <tr *ngFor="let request of leaveRequests" class="border-b">
+          <td class="py-2">{{ request.user.name }}</td>
+          <td class="py-2">{{ request.status }}</td>
+          <td class="py-2 flex space-x-2">
+            <button class="btn-action btn-approve flex-1 bg-green-500 text-white rounded" (click)="approveLeave(request._id)"><span class="text-sm">Approve</span></button>
+            <button class="btn-action btn-decline flex-1 bg-red-500 text-white rounded" (click)="declineLeave(request._id)"><span class="text-sm">Decline</span></button>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-template #noData>
+        <tr>
+          <td class="py-2" colspan="5">-- No data available --</td>
+        </tr>
+      </ng-template>
     </tbody>
   </table>
 </div>
