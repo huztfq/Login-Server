@@ -96,7 +96,7 @@ const getUserLeaveRequests = async (req, res) => {
   }
 };
 
-cconst approveLeaveRequestByAdmin = async (req, res) => {
+const approveLeaveRequestByAdmin = async (req, res) => {
   try {
     const { leaveID, status } = req.body;
 
