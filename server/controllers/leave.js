@@ -96,7 +96,7 @@ const getUserLeaveRequests = async (req, res) => {
   }
 };
 
-const approveLeaveRequestByAdmin = async (req, res) => {
+cconst approveLeaveRequestByAdmin = async (req, res) => {
   try {
     const { leaveID, status } = req.body;
 
@@ -104,24 +104,13 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       console.error('Leave ID is missing in the request body.');
       return res.status(400).json({ message: 'Leave ID is required in the request body' });
     }
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-    if (!token) {
-      console.error('Token is missing in the request headers.');
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-    const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
-    if (!decodedToken || decodedToken.role !== 'admin') {
-      return res.status  (403).json({ message: 'Permission denied' });
-    }
+    
     const leaveRequest = await Leave.findById(leaveID);
     if (!leaveRequest) {
       console.error('Leave request not found. Leave ID:', leaveID);
       return res.status(404).json({ message: 'Leave request not found' });
     }
-    if (decodedToken.user_id.toString() !== leaveRequest.user.toString()) {
-      console.error('Permission denied. Leave Request User ID:', leaveRequest.user, 'Admin ID:', decodedToken.user_id);
-      return res.status(403).json({ message: 'Permission denied' });
-    }
+
     leaveRequest.status = status;
     const updatedLeaveRequest = await leaveRequest.save();
     if (status === 'approved') {
