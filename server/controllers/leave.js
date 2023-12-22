@@ -23,7 +23,13 @@ const createSickLeave = async (req, res) => {
     });
 
     if (existingLeave) {
-      return res.status(400).json({ message: 'Request Already Made, please wait for its approval before making another one.' });
+      return res.status(400).json({
+        message: 'Request Already Made, please wait for its approval before making another one.',
+      });
+    }
+
+    if (!['casual', 'sick'].includes(leaveType.toLowerCase().trim())) {
+      return res.status(400).json({ message: 'Invalid leaveType. Allowed values are casual and sick.' });
     }
 
     const newLeave = new Leave({
@@ -45,7 +51,7 @@ const createSickLeave = async (req, res) => {
   } catch (error) {
     console.error('Error creating leave:', error);
     console.error('Request details:', { params: req.params, body: req.body });
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
@@ -67,7 +73,6 @@ const getLeaveRequestsForAdmin = async (req, res) => {
 
     return res.status(200).json(responseLeaveRequests);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
@@ -93,7 +98,6 @@ const getUserLeaveRequests = async (req, res) => {
   } catch (error) {
     console.error('Error in getUserLeaveRequests:', error);
 
-    // Log specific information about the error
     if (error.name === 'CastError') {
       return res.status(400).json({ message: 'Invalid userId format' });
     }
