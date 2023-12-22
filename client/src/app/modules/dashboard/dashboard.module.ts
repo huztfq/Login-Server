@@ -15,9 +15,11 @@ import { AuthGuard } from './guards/auth.guard';
 import { AuthInterceptor } from '../auth/interceptors/auth.interceptor';
 import { DashboardService } from './services/dashboard.service';
 import { LoadingComponent } from '../layout/components/loading/loading.component';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 @NgModule({
-  imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule, LoadingComponent],
+  imports: [DashboardRoutingModule, CommonModule, FormsModule, AuthModule, HttpClientModule, LoadingComponent, ReactiveFormsModule],
   declarations: [HomeComponent, AddAttendaceComponent, AddEmployeeComponent, ViewPtoComponent],
   providers: [AuthService, DashboardService, AuthGuard,  {
     provide: HTTP_INTERCEPTORS,

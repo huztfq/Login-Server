@@ -1,8 +1,10 @@
+// add-employee.component.ts
+
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ICreateUser } from '../../models/user.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-add-employee',
@@ -19,31 +21,42 @@ export class AddEmployeeComponent {
     designation: ''
   };
 
-  public employeeForm: FormGroup; 
+  public employeeForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder, 
     private dashboardService: DashboardService,
-    private router: Router
+    private router: Router,
+    private formBuilder: FormBuilder
   ) {
-    this.employeeForm = this.fb.group({
-      fullName: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]],
+    this.employeeForm = this.formBuilder.group({
+      name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z ]*$/)]],
       email: ['', [Validators.required, Validators.email]],
       password: [
         '',
         [
           Validators.required,
-          Validators.pattern(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/)
-        ]
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/),
+        ],
       ],
       role: ['employee', Validators.required],
-      joiningDate: ['', [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2}$/)]],
-      designation: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]]
+      joiningDate: [new Date(), Validators.required],
+      designation: ['', [Validators.required, Validators.pattern(/^[a-zA-Z ]*$/)]],
     });
+  }
+
+  public isInvalid(controlName: string): boolean {
+    const control = this.employeeForm.controls[controlName];
+    const isControlInvalid =
+      control.invalid && (control.dirty || control.touched);
+    const isControlNotEmpty = control.value !== null && control.value !== '';
+
+    return isControlInvalid && isControlNotEmpty;
   }
 
   public createEmployee() {
     if (this.employeeForm.valid) {
+      this.userData = { ...this.employeeForm.value };
       this.dashboardService.createEmployee(this.userData).subscribe(res => {
         this.router.navigate(['dashboard/home']);
       });
