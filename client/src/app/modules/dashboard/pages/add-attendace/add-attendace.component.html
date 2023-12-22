@@ -42,13 +42,13 @@
               </select>
             </div>
   
-            <div class="mb-4">
+            <div class="mb-4" *ngIf="attendanceStatus === 'present'">
               <label class="block text-gray-700 text-sm font-bold mb-2">Work Location</label>
               <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="workLocation" name="workLocation">
                 <option value="onsite">Onsite</option>
                 <option value="remote">Remote</option>
               </select>
-            </div>
+          </div>
   
             <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" (click)="submitAttendance()">Submit</button>
       </form>
