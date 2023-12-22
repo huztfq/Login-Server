@@ -18,6 +18,11 @@ const leaveSchema = new mongoose.Schema(
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
+    leaveType: {
+      type: String,
+      enum: ['casual', 'sick'],
+      default: null,
+    },
     attendance: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Attendance',
