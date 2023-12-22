@@ -118,6 +118,8 @@ async function calculateAttendance(user) {
   const attendanceSummary = {
     _id: user._id,
     name: user.name,
+    designation: user.designation,
+    joiningDate: user.joiningDate,
     daysPresent,
     daysAbsent,
     sickLeaves,
