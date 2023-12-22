@@ -1,13 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ICreateUser, ISubmitAttendance, IUserResponse, IUsersResponse } from '../models/user.model';
+import { ICreateUser, ILeaveRequest, ISubmitAttendance, IUserResponse, IUsersResponse } from '../models/user.model';
 import { APIURL } from 'src/app/core/constants/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
+  declineLeaveRequest(leaveId: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  getEmployeeDetails: any;
+  getLeaveDetails: any;
+  approveLeave: any;
+  declineLeave: any;
 
   constructor(private http: HttpClient) { }
 
@@ -27,4 +35,26 @@ export class DashboardService {
     return this.http.post(APIURL + `user/signup`, data);
   }
 
+  public getLeaveRequest(id?: string): Observable<ILeaveRequest> {
+    const url = id ? APIURL + `leave/getleave/${id}` : APIURL + 'leave/getleave'; // Use a different URL for requests with and without id
+    return this.http.get<ILeaveRequest>(url);
+  }
+
+  public makeLeaveRequest(userId: string, data: any) {
+    return this.http.post(APIURL + `leave/createLeave/${userId}`, data);
+  }
+
+  public approveLeaveRequest(leaveID: string, status: 'approved' | 'declined') {
+    const requestBody = { leaveID, status };
+  
+    return this.http.post(`${APIURL}leave/approveLeaveRequestByAdmin`, requestBody);
+  }
+
+  getLeaveRequestById() {
+    return this.http.get(APIURL + `leave/leaveRequestsForAdmin`);
+  }
+  
+  getLeaveDetailsById(userId: string) {
+    return this.http.get(APIURL + `leave/leaveRequests/${userId}`);
+  }
 }

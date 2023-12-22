@@ -1,0 +1,48 @@
+<ng-container *ngIf="!leaveDetails; else showLeaveDetails">
+  <app-loading></app-loading>
+</ng-container>
+
+<ng-template #showLeaveDetails>
+  <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+    <h2 class="text-2xl font-bold mb-4">Leave Details</h2>
+
+    <!-- Loop through each leave request -->
+    <div *ngFor="let request of leaveDetails.leaveRequests" class="mb-6 border-b border-gray-300 pb-4">
+      <div class="flex items-center mb-2">
+        <span class="text-gray-700 text-sm font-bold mr-2">Request Date:</span>
+        <span>{{ request.requestDate }}</span>
+      </div>
+      <div class="flex items-center mb-2">
+        <span class="text-gray-700 text-sm font-bold mr-2">Leave Type:</span>
+        <span>{{ request.leaveType }}</span>
+      </div>
+      <div class="flex items-center mb-2">
+        <span class="text-gray-700 text-sm font-bold mr-2">Status:</span>
+        <span>{{ request.status }}</span>
+      </div>
+    </div>
+
+    <!-- Button to show/hide form -->
+    <div class="flex justify-end mt-4">
+      <button class="bg-primary-500 text-white py-2 px-4 rounded" (click)="toggleLeaveRequestForm()">Make Request</button>
+    </div>
+
+    <!-- Form for leave request -->
+    <form *ngIf="showLeaveRequestForm" (ngSubmit)="submitLeaveRequest()">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Date</label>
+        <input type="date" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="leaveRequest.date" name="date" required>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Leave Type</label>
+        <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="leaveRequest.leaveType" name="leaveType" required>
+          <option value="casual">Casual Leave</option>
+          <option value="sick">Sick Leave</option>
+        </select>
+      </div>
+
+      <button type="submit" class="bg-primary-500 text-white py-2 px-4 rounded">Submit Leave Request</button>
+    </form>
+  </div>
+</ng-template>
