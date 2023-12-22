@@ -33,9 +33,9 @@ const calculateAttendance = async (user) => {
 const createAttendance = async (req, res) => {
   try {
     const { date, status, leaveType, workLocation } = req.body;
-    const userId = req.params.id;
+    const userId = req.params.userId; 
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+      return res.status(400).json({ error: "User ID is not there" });
     }
 
     const attendance = new Attendance({
