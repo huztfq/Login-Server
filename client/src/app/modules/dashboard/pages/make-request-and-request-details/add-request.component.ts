@@ -56,7 +56,6 @@ export class AddRequestComponent implements OnInit {
   
     this.dashboardService.makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data).subscribe(
       (response: any) => {
-        console.log('Leave Request Response:', response);
         this.showLeaveRequestForm = false;
         this.getLeaveDetails();
       },

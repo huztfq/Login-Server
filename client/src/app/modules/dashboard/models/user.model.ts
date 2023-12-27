@@ -1,10 +1,10 @@
 export interface IUser {
-    userId: string;
+    _id: string;
     name: string;
     joiningDate: Date;
     designation: string;
-    totalDaysPresent: number;
-    totalDaysAbsent: number;
+    daysPresent: number;
+    daysAbsent: number;
     ptoRemaining: number;
   }
   
@@ -57,6 +57,8 @@ export interface ILeaveRequest {
     designation: string;
   };
   status: 'pending' | 'approved' | 'declined';
+  startDate: string;
+  leaveType: 'casual' | 'sick';
 }
   
   export interface ILeaveRequestResponse {

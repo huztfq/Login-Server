@@ -1,48 +1,67 @@
-import { Component } from '@angular/core';
-import { ISubmitAttendance, ISubmitAttendanceResponse, IUser, IUserResponse } from '../../models/user.model';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ISubmitAttendance, IUser, IUsersResponse } from '../../models/user.model';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
+import { NgZone } from '@angular/core';
 
 @Component({
-  selector: 'app-add-attendace',
+  selector: 'app-add-attendance',
   templateUrl: './add-attendace.component.html',
-  styleUrl: './add-attendace.component.scss'
+  styleUrls: ['./add-attendace.component.scss']
 })
-export class AddAttendaceComponent {
+export class AddAttendanceComponent implements OnInit {
   selectedDate: string = new Date().toISOString().split('T')[0];
   attendanceStatus: 'present' | 'absent' = 'present';
   leaveType: 'casual' | 'sick' | null = null;
   workLocation: 'remote' | 'onsite' | null = null;
-  private id: string = ''
+  selectedEmployeeId: string = '';
+  employees: IUser[] = [];
 
-  public declare employee: IUser;
-
-  constructor(private route: ActivatedRoute, private router:Router, private dashboardService: DashboardService){}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private dashboardService: DashboardService,
+    private zone: NgZone
+  ) {}
 
   ngOnInit() {
-    this.id = this.route.snapshot.params['id'];
-    this.dashboardService.getSingleEmployee(this.id).subscribe((res: IUserResponse) => {
-      this.employee = res.data;
-    })
+    this.fetchEmployees();
+  }
+
+  private fetchEmployees() {
+    this.dashboardService.getAllEmployees().subscribe(
+      (res: IUsersResponse) => {
+        this.zone.run(() => {
+          this.employees = res.data;
+        });
+      },
+      (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    );
   }
 
   onStatusChange() {
-    // Reset leaveType when status changes to 'present'
     if (this.attendanceStatus === 'present') {
       this.leaveType = 'casual';
     }
   }
 
-  public submitAttendance() {
+  submitAttendance() {
     const data: ISubmitAttendance = {
-      userId: this.id,
+      userId: this.selectedEmployeeId,
       date: this.selectedDate,
       leaveType: this.leaveType,
       status: this.attendanceStatus,
+    };
 
-    }
-    this.dashboardService.submitAttendance(data, this.id).subscribe((res) => {
-      this.router.navigate(['dashboard/home'])
-    })
+    this.dashboardService.submitAttendance(data, this.selectedEmployeeId).subscribe(
+      (res) => {
+        this.router.navigate(['dashboard/home']);
+      },
+      (error) => {
+        console.error('Error submitting attendance:', error);
+      }
+    );
   }
 }

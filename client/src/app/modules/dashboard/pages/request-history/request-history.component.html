@@ -1,0 +1,38 @@
+<!-- get-request.component.html -->
+
+<div class="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+    <h2 class="text-3xl font-bold mb-6 text-center">Requests History</h2>
+  
+    <table class="w-full table-fixed">
+        <thead>
+            <tr class="border-b-2">
+                <th class="w-1/6 py-3 text-left">Name</th>
+                <th class="w-1/6 py-3 text-left">Requested Date</th>
+                <th class="w-1/6 py-3 text-left">Leave Type</th>
+                <th class="w-1/6 py-3 text-left">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
+                <tr *ngFor="let request of leaveRequests" class="border-b">
+                    <td class="py-2">{{ request.user.name }}</td>
+                    <td class="py-2">{{ request.startDate | date:'yyyy-MM-dd' }}</td>
+                    <td class="py-2">{{ request.leaveType }}</td>
+                    <td class="py-2">
+                        <span *ngIf="request.status === 'approved'" class="text-white">
+                            <button class="bg-green-600 px-2 py-1 rounded-full">Approved</button>
+                        </span>
+                        <span *ngIf="request.status === 'declined'" class="text-red-500">
+                            <button class="bg-red-200 px-2 py-1 rounded-full">Declined</button>
+                        </span>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-template #noData>
+                <tr>
+                    <td class="py-2 text-center" colspan="4">-- No data available --</td>
+                </tr>
+            </ng-template>
+        </tbody>
+    </table>
+</div>
