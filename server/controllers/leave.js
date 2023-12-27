@@ -92,6 +92,7 @@ const getUserLeaveRequests = async (req, res) => {
       status: leave.status,
       name: leave.user.name,
       leaveDate: leave.startDate,
+      leaveType: leave.leaveType,
       status: leave.status,
     }));
 
