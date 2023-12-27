@@ -168,16 +168,55 @@ async function handleDeleteEmployees(req, res) {
   try {
     const { userId } = req.params;
 
-    // Check if the user making the request is an admin
     const requestingUser = await User.findById(userId);
     if (!requestingUser || requestingUser.role !== 'admin') {
       return res.status(403).json({ error: "Permission denied. Only admins can perform this action." });
     }
 
-    // Fetch all user IDs with the role 'employee' and delete them
     const deletedUsers = await User.deleteMany({ role: 'employee' });
 
     return res.json({ message: `Deleted ${deletedUsers.deletedCount} employee(s) successfully.` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error. Please try again later." });
+  }
+}
+
+async function handleFetchEmployeeDetails(req, res) {
+  try {
+    const { userId } = req.params;
+
+    const employeeDetails = await User.findById(userId, 'name email designation joiningDate password role');
+    if (!employeeDetails) {
+      return res.status(404).json({ error: "Employee not found." });
+    }
+
+    return res.json(employeeDetails);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error. Please try again later." });
+  }
+}
+
+async function handleUpdateEmployeeDetails(req, res) {
+  try {
+    const { userId } = req.params;
+
+    const employee = await User.findById(userId);
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found." });
+    }
+
+    const { name, email, designation, joiningDate, password } = req.body;
+    if (name) employee.name = name;
+    if (email) employee.email = email;
+    if (designation) employee.designation = designation;
+    if (joiningDate) employee.joiningDate = new Date(joiningDate);
+    if (password) employee.password = password;
+
+    await employee.save();
+
+    return res.json({ message: "Employee details updated successfully." });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error. Please try again later." });
@@ -193,4 +232,6 @@ module.exports = {
   handleUserLogout,
   handleInfo,
   handleDeleteEmployees,
+  handleFetchEmployeeDetails,
+  handleUpdateEmployeeDetails,
 };
