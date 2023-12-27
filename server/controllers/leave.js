@@ -112,11 +112,11 @@ const approveLeaveRequestByAdmin = async (req, res) => {
   try {
     const { leaveID, status } = req.body;
 
-    if (!leaveID) {
-      console.error('Leave ID is missing in the request body.');
-      return res.status(400).json({ message: 'Leave ID is required in the request body' });
+    if (!leaveID || !status) {
+      console.error('Leave ID or status is missing in the request body.');
+      return res.status(400).json({ message: 'Leave ID and status are required in the request body' });
     }
-    
+
     const leaveRequest = await Leave.findById(leaveID);
     if (!leaveRequest) {
       console.error('Leave request not found. Leave ID:', leaveID);
@@ -125,7 +125,9 @@ const approveLeaveRequestByAdmin = async (req, res) => {
 
     leaveRequest.status = status;
     const updatedLeaveRequest = await leaveRequest.save();
+
     if (status === 'approved') {
+      // Add logic for 'approved' status
       const newAttendance = new Attendance({
         user: updatedLeaveRequest.user,
         date: updatedLeaveRequest.startDate,
@@ -133,6 +135,7 @@ const approveLeaveRequestByAdmin = async (req, res) => {
         leaveType: updatedLeaveRequest.leaveType,
       });
       await newAttendance.save();
+
       if (updatedLeaveRequest.leaveType === 'casual' || updatedLeaveRequest.leaveType === 'sick') {
         const user = await User.findById(updatedLeaveRequest.user);
         if (user) {
@@ -144,11 +147,22 @@ const approveLeaveRequestByAdmin = async (req, res) => {
           await user.save();
         }
       }
+    } else if (status === 'declined') {
+      if (leaveRequest.status === 'pending') {
+        leaveRequest.status = 'declined';
+        await leaveRequest.save();
+      }
     }
+
     res.status(200).json({ message: 'Leave request updated successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    if (error.name === 'ValidationError') {
+      console.error('Validation Error:', error.errors);
+      res.status(400).json({ message: 'Leave validation failed', errors: error.errors });
+    } else {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
   }
 };
 
