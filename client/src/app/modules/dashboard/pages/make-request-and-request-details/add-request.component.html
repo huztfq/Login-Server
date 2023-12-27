@@ -12,7 +12,7 @@
       <div *ngFor="let request of leaveDetails.leaveRequests" class="mb-4">
         <div class="flex items-center mb-2">
           <span class="text-gray-700 text-sm font-bold mr-2">Request Date:</span>
-          <span>{{ request.requestDate }}</span>
+          <span>{{ request.leaveDate | date:'yyyy-MM-dd' }}</span>
         </div>
         <div class="flex items-center mb-2">
           <span class="text-gray-700 text-sm font-bold mr-2">Leave Type:</span>
@@ -27,12 +27,29 @@
 
     <!-- Button to show/hide form -->
     <div class="flex justify-end mt-4">
-      <button class="bg-primary-500 text-white py-2 px-4 rounded" (click)="toggleLeaveRequestForm()">Make Request</button>
+      <button class="bg-primary-500 text-white py-2 px-4 rounded" (click)="makeLeaveRequest()">Make Request</button>
     </div>
 
     <!-- Form for leave request -->
     <form *ngIf="showLeaveRequestForm" (ngSubmit)="submitLeaveRequest()" class="mt-4">
-      <!-- Form content as before -->
+      <div class="mb-4">
+        <label for="leaveDate" class="block text-sm font-bold text-gray-700">Leave Date:</label>
+        <input type="date" id="leaveDate" [(ngModel)]="leaveRequest.date" class="form-input">
+      </div>
+      
+      <div class="mb-4">
+        <label for="leaveType" class="block text-sm font-bold text-gray-700">Leave Type:</label>
+        <select id="leaveType" [(ngModel)]="leaveRequest.leaveType" class="form-select">
+          <option value="casual">Casual</option>
+          <option value="sick">Sick</option>
+        </select>
+      </div>
+      
+      <div class="flex justify-end">
+        <button type="button" class="text-primary-500 hover:underline mr-4" (click)="toggleLeaveRequestForm()">Cancel</button>
+        <button type="submit" class="bg-primary-500 text-white py-2 px-4 rounded" (clock)="submitLeaveRequest()">Submit</button>
+      </div>
+      <!-- Form contentas before -->
     </form>
   </div>
 </ng-template>

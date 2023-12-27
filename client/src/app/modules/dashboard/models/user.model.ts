@@ -34,7 +34,7 @@ export interface IUser {
     status?: "present" | "absent"
   }
   export interface ISubmitRequest{
-    date: string;
+    startDate: string;
     leaveType?: 'casual' | 'sick' | null;
     status?: "present" | "absent"
   }
@@ -56,7 +56,7 @@ export interface ILeaveRequest {
     name: string;
     designation: string;
   };
-  status: 'pending' | 'approved' | 'declined';
+  status: 'pending' | 'approved' | 'rejected';
   startDate: string;
   leaveType: 'casual' | 'sick';
 }

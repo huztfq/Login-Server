@@ -14,9 +14,8 @@ export class AddRequestComponent implements OnInit {
   private userId: string = '';
   leaveDetails: any;
   selectedDate: string = new Date().toISOString().split('T')[0];
-  leaveType: 'casual' | 'sick' | null = null;
+  leaveRequest: { date: string, leaveType: 'casual' | 'sick' } = { date: '', leaveType: 'casual' };
   showLeaveRequestForm: boolean = false;
-  leaveRequest: { date: string, leaveType: string } = { date: '', leaveType: '' };
 
   constructor(
     private route: ActivatedRoute,
@@ -49,10 +48,15 @@ export class AddRequestComponent implements OnInit {
   }
 
   submitLeaveRequest() {
+    // Ensure leaveRequest.date is set to the selectedDate
+    this.leaveRequest.date = this.selectedDate;
+  
     const data: ISubmitRequest = {
-      date: this.leaveRequest.date,
-      leaveType: this.leaveRequest.leaveType as 'casual' | 'sick' | null,
+      startDate: this.leaveRequest.date,
+      leaveType: this.leaveRequest.leaveType,
     };
+    
+    console.log(data);
   
     this.dashboardService.makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data).subscribe(
       (response: any) => {

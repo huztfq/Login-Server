@@ -7,7 +7,6 @@
     <thead>
       <tr class="border-b-2">
         <th class="w-1/6 py-3">Name</th>
-        <th class="w-1/6 py-3">Status</th>
         <th class="w-1/6 py-3">Requested Date</th>
         <th class="w-1/6 py-3">Leave Type</th>
         <th class="w-1/6 py-3">Action</th>
@@ -17,12 +16,11 @@
       <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
         <tr *ngFor="let request of leaveRequests" class="border-b">
           <td class="py-2">{{ request.user.name }}</td>
-          <td class="py-2">{{ request.status }}</td>
           <td class="py-2">{{ request.startDate | date:'yyyy-MM-dd' }}</td>
           <td class="py-2">{{request.leaveType}}</td>
           <td class="py-2 flex space-x-2">
             <button class="btn-action btn-approve flex-1 bg-green-500 text-white rounded" (click)="approveLeave(request._id)"><span class="text-sm">Approve</span></button>
-            <button class="btn-action btn-decline flex-1 bg-red-500 text-white rounded" (click)="declineLeave(request._id)"><span class="text-sm">Decline</span></button>
+            <button class="btn-action btn-decline flex-1 bg-red-500 text-white rounded" (click)="declineLeave(request._id)"><span class="text-sm">Reject</span></button>
           </td>
         </tr>
       </ng-container>

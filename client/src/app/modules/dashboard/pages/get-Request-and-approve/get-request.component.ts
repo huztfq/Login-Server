@@ -25,7 +25,7 @@ export class GetRequestComponent implements OnInit {
     this.dashboardService.getLeaveRequestById().subscribe(
       (response: any) => {
         this.leaveRequests = response.filter(
-          (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'declined'
+          (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'rejected'
         );
       },
       (error) => {
@@ -48,7 +48,7 @@ export class GetRequestComponent implements OnInit {
   }
 
   declineLeave(leaveID: string) {
-    this.dashboardService.approveLeaveRequest(leaveID, 'declined').subscribe(
+    this.dashboardService.approveLeaveRequest(leaveID, 'rejected').subscribe(
       () => {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
