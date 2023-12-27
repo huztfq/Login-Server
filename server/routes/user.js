@@ -1,5 +1,5 @@
 const express = require("express");
-const { handleUserSignup, handleUserLogin, handleUserResetPassword, handleUserForgotPassword, handleUserLogout, handleInfo, handleDeleteEmployees} = require("../controllers/user");
+const { handleUserSignup, handleUserLogin, handleUserResetPassword, handleUserForgotPassword, handleUserLogout, handleInfo, handleDeleteEmployees, handleFetchEmployeeDetails, handleUpdateEmployeeDetails} = require("../controllers/user");
 const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
@@ -11,6 +11,8 @@ router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword)
 router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword);
 router.post("/logout", authMiddleware.authenticateToken, handleUserLogout);
 router.get("/info", handleInfo);
-router.post("/deleteEmployees/:userId", handleDeleteEmployees);
+router.post("/deleteEmployees/:userId", authMiddleware.authenticateToken, handleDeleteEmployees);
+router.get("/fetchEmployeeDetails/:userId", authMiddleware.authenticateToken, handleFetchEmployeeDetails);
+router.post("/updateEmployeeDetails/:userId", authMiddleware.authenticateToken, handleUpdateEmployeeDetails);
 
 module.exports = router;
