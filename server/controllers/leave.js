@@ -92,6 +92,7 @@ const getUserLeaveRequests = async (req, res) => {
       status: leave.status,
       name: leave.user.name,
       leaveDate: leave.startDate,
+      status: leave.status,
     }));
 
     return res.status(200).json({ user: user.name, leaveRequests: formattedLeaveRequests });
