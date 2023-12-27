@@ -20,8 +20,7 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  public addAttendance(id: string) {
-    console.log(id);
-    this.router.navigate([`dashboard/add-attendance/${id}`]);
+  public addAttendance() {
+    this.router.navigate([`dashboard/add-attendance`]);
   }
 }

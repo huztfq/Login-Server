@@ -28,9 +28,7 @@ export class SidebarSubmenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.filteredSubmenu = JSON.parse(JSON.stringify(this.submenu));
-    console.log(this.authService.getUserRole())
     this.filteredSubmenu!.children = this.submenu?.children?.filter(item => item.access === this.authService.getUserRole());
-    console.log(this.submenu)
   }
 
   public toggleMenu(menu: any) {

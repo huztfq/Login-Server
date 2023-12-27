@@ -1,56 +1,57 @@
-<ng-container *ngIf="!employee; else showEmployee">
-  <app-loading></app-loading>
+<ng-container *ngIf="employees.length > 0; else showLoading">
+  <!-- Employee details form -->
+  <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold mb-4">Employee Details</h2>
+      <!-- Display employee details here -->
+    </div>
+
+    <form>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Choose Employee</label>
+        <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="selectedEmployeeId" name="selectedEmployeeId">
+          <option value="" disabled>Select an employee</option>
+          <option *ngFor="let emp of employees" [value]="emp._id">{{ emp.name }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="selectedEmployeeId">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Date</label>
+          <input type="date" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="selectedDate" name="selectedDate">
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Status</label>
+          <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="attendanceStatus" (change)="onStatusChange()" name="attendanceStatus">
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+          </select>
+        </div>
+
+        <div class="mb-4" *ngIf="attendanceStatus === 'absent'">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Leave Type</label>
+          <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="leaveType" name="leaveType">
+            <option value="casual">Casual Leave</option>
+            <option value="sick">Sick Leave</option>
+          </select>
+        </div>
+
+        <div class="mb-4" *ngIf="attendanceStatus === 'present'">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Work Location</label>
+          <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="workLocation" name="workLocation">
+            <option value="onsite">Onsite</option>
+            <option value="remote">Remote</option>
+          </select>
+        </div>
+
+        <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" (click)="submitAttendance()">Submit</button>
+      </div>
+    </form>
+  </div>
 </ng-container>
 
-<ng-template #showEmployee>
-  <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
-      <div class="mb-6">
-        <h2 class="text-2xl font-bold mb-4">Employee Details</h2>
-        <div class="flex items-center mb-2">
-          <span class="text-gray-700 text-sm font-bold mr-2">Name:</span>
-          <span>{{ employee.name }}</span>
-        </div>
-        <div class="flex items-center mb-2">
-          <span class="text-gray-700 text-sm font-bold mr-2">Designation:</span>
-          <span>{{ employee.designation }}</span>
-        </div>
-        <div class="flex items-center mb-2">
-          <span class="text-gray-700 text-sm font-bold mr-2">PTO Remaining:</span>
-          <span>{{ employee.ptoRemaining }} days</span>
-        </div>
-      </div>
-  
-      <form>
-          <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Date</label>
-              <input type="text" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="selectedDate" disabled name="selectedDate">
-            </div>
-  
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Status</label>
-              <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="attendanceStatus" (change)="onStatusChange()" name="attendanceStatus">
-                <option value="present">Present</option>
-                <option value="absent">Absent</option>
-              </select>
-            </div>
-  
-            <div class="mb-4" *ngIf="attendanceStatus === 'absent'">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Leave Type</label>
-              <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="leaveType" name="leaveType">
-                <option value="casual">Casual Leave</option>
-                <option value="sick">Sick Leave</option>
-              </select>
-            </div>
-  
-            <div class="mb-4" *ngIf="attendanceStatus === 'present'">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Work Location</label>
-              <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="workLocation" name="workLocation">
-                <option value="onsite">Onsite</option>
-                <option value="remote">Remote</option>
-              </select>
-          </div>
-  
-            <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" (click)="submitAttendance()">Submit</button>
-      </form>
-    </div>
+<ng-template #showLoading>
+  <!-- Loading component -->
+  <app-loading></app-loading>
 </ng-template>

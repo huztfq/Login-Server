@@ -57,4 +57,12 @@ export class DashboardService {
   getLeaveDetailsById(userId: string) {
     return this.http.get(APIURL + `leave/leaveRequests/${userId}`);
   }
+
+  getEmployeeDetailsById(userId: string) {
+    return this.http.get(APIURL + `user/fetchEmployeeDetails/${userId}`);
+  }
+
+  updateEmployeeDetailsById(userId: string, data: any) {
+    return this.http.post(APIURL + `user/updateEmployeeDetails/${userId}`, data);
+  }
 }

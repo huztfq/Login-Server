@@ -50,7 +50,6 @@ export class GetRequestComponent implements OnInit {
   declineLeave(leaveID: string) {
     this.dashboardService.approveLeaveRequest(leaveID, 'declined').subscribe(
       () => {
-        console.log('Leave declined successfully');
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate([this.route.snapshot.url]);
