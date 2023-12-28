@@ -80,9 +80,9 @@ async function calculateAttendance(user) {
   probationEndDate.setMonth(joinDate.getMonth() + 3);
 
   if (today < probationEndDate) {
-    today = probationEndDate;
+    today = new Date(probationEndDate);
   }
-
+  
   const workingDaysArray = getWorkingDaysArray(probationEndDate, today);
 
   const existingAttendance = await Attendance.find({
@@ -120,17 +120,18 @@ async function calculateAttendance(user) {
       daysPresent++;
     } else if (attendance.status === 'absent') {
       daysAbsent++;
-      daysPresent--; 
+      daysPresent--;
     } else if (attendance.status === 'halfday') {
-      daysPresent -= 0.5; 
+      daysPresent -= 0.5;
+      halfDays++;
     }
-
+  
     if (attendance.leaveType === 'sick') {
       sickLeaves++;
     } else if (attendance.leaveType === 'casual') {
       casualLeaves++;
-    }   
-    if (attendance.status === 'PTO') {
+    }
+    if (attendance.leaveType === 'PTO') {
       daysPresent--;
     }
   });
@@ -140,11 +141,15 @@ async function calculateAttendance(user) {
   const ptoDaysAllowed = totalPTODays / 12;
   const remainingPTO = Math.max(0, ptoDaysAllowed * elapsedMonths);
 
+  // Format probation end date as "1 Dec 2023"
+  const formattedProbationEndDate = `${probationEndDate.getDate()} ${getMonthName(probationEndDate.getMonth())} ${probationEndDate.getFullYear()}`;
+
   const attendanceSummary = {
     _id: user._id,
     name: user.name,
     designation: user.designation,
     joiningDate: user.joiningDate,
+    probationEndDate: formattedProbationEndDate,
     daysPresent,
     daysAbsent,
     sickLeaves,
@@ -156,6 +161,13 @@ async function calculateAttendance(user) {
   return attendanceSummary;
 }
 
+function getMonthName(monthIndex) {
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  return months[monthIndex];
+}
 
 function getWorkingDaysArray(startDate, endDate) {
   const workingDaysArray = [];
