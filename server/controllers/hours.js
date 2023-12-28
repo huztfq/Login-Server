@@ -5,9 +5,15 @@ const User = require("../models/user");
 const createAttendance = async (req, res) => {
   try {
     const { date, status, leaveType, workLocation } = req.body;
-    const userId = req.params.userId; // Update this line
+    const userId = req.params.userId;
     if (!userId) {
       return res.status(400).json({ error: "User ID is not there" });
+    }
+
+    const inputDate = new Date(date);
+    const dayOfWeek = inputDate.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return res.status(400).json({ error: "Attendance cannot be recorded on weekends" });
     }
 
     const attendance = new Attendance({
@@ -67,14 +73,21 @@ const fetchAllUsersAttendance = async (req, res) => {
 };
 
 async function calculateAttendance(user) {
-  const today = new Date();
+  let today = new Date();
   const joinDate = new Date(user.joiningDate);
 
-  const workingDaysArray = getWorkingDaysArray(joinDate, today);
+  const probationEndDate = new Date(joinDate);
+  probationEndDate.setMonth(joinDate.getMonth() + 3);
+
+  if (today < probationEndDate) {
+    today = probationEndDate;
+  }
+
+  const workingDaysArray = getWorkingDaysArray(probationEndDate, today);
 
   const existingAttendance = await Attendance.find({
     user: user._id,
-    date: { $gte: joinDate, $lte: today },
+    date: { $gte: probationEndDate, $lte: today },
   });
 
   const existingDates = existingAttendance.map((record) => record.date.toISOString());
@@ -93,27 +106,39 @@ async function calculateAttendance(user) {
 
   const userAttendance = await Attendance.find({
     user: user._id,
-    date: { $gte: joinDate, $lte: today },
+    date: { $gte: probationEndDate, $lte: today },
   });
 
   let daysPresent = 0;
   let daysAbsent = 0;
   let sickLeaves = 0;
   let casualLeaves = 0;
+  let halfDays = 0;
 
   userAttendance.forEach((attendance) => {
-    if (attendance.status === 'present') {
+    if (attendance.status === 'present' && !attendance.leaveType) {
       daysPresent++;
     } else if (attendance.status === 'absent') {
       daysAbsent++;
+      daysPresent--; 
+    } else if (attendance.status === 'halfday') {
+      daysPresent -= 0.5; 
     }
 
     if (attendance.leaveType === 'sick') {
       sickLeaves++;
     } else if (attendance.leaveType === 'casual') {
       casualLeaves++;
+    }   
+    if (attendance.status === 'PTO') {
+      daysPresent--;
     }
   });
+
+  const totalPTODays = 15;
+  const elapsedMonths = Math.max(0, today.getMonth() - probationEndDate.getMonth() + 12 * (today.getFullYear() - probationEndDate.getFullYear()));
+  const ptoDaysAllowed = totalPTODays / 12;
+  const remainingPTO = Math.max(0, ptoDaysAllowed * elapsedMonths);
 
   const attendanceSummary = {
     _id: user._id,
@@ -124,10 +149,13 @@ async function calculateAttendance(user) {
     daysAbsent,
     sickLeaves,
     casualLeaves,
+    halfDays,
+    remainingPTO,
   };
 
   return attendanceSummary;
 }
+
 
 function getWorkingDaysArray(startDate, endDate) {
   const workingDaysArray = [];
