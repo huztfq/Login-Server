@@ -27,6 +27,9 @@ const leaveSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Attendance',
     },
+    message: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
