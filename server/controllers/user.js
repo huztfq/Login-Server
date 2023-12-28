@@ -67,7 +67,7 @@ async function handleUserLogin(req, res) {
       userId: user._id,
       token,
       role: user.role,
-
+      name: user.name,
     };
 
     return res.json(resObject);
