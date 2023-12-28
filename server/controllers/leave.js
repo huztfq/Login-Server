@@ -72,6 +72,7 @@ const getLeaveRequestsForAdmin = async (req, res) => {
       leaveType: leave.leaveType,
       status: leave.status,
       message: leave.message,
+      approvedby: leave.approvedby,
     }));
 
     return res.status(200).json(responseLeaveRequests);
@@ -113,7 +114,7 @@ const getUserLeaveRequests = async (req, res) => {
 
 const approveLeaveRequestByAdmin = async (req, res) => {
   try {
-    const { leaveID, status } = req.body;
+    const { leaveID, status, name} = req.body;
 
     if (!leaveID || !status) {
       console.error('Leave ID or status is missing in the request body.');
@@ -127,6 +128,7 @@ const approveLeaveRequestByAdmin = async (req, res) => {
     }
 
     leaveRequest.status = status;
+    leaveRequest.approvedby = name;
     const updatedLeaveRequest = await leaveRequest.save();
 
     if (status === 'approved') {
