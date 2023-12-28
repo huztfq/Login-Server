@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const createSickLeave = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { startDate, leaveType } = req.body;
+    const { startDate, leaveType, message } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required.' });
@@ -36,6 +36,7 @@ const createSickLeave = async (req, res) => {
       user: userId,
       startDate,
       leaveType,
+      message,
       status: 'pending',
     });
 
@@ -47,6 +48,7 @@ const createSickLeave = async (req, res) => {
       startDate: savedLeave.startDate,
       leaveType: savedLeave.leaveType,
       status: savedLeave.status,
+      message: savedLeave.message,
     });
   } catch (error) {
     console.error('Error creating leave:', error);
@@ -69,6 +71,7 @@ const getLeaveRequestsForAdmin = async (req, res) => {
       startDate: leave.startDate,
       leaveType: leave.leaveType,
       status: leave.status,
+      message: leave.message,
     }));
 
     return res.status(200).json(responseLeaveRequests);
@@ -127,7 +130,6 @@ const approveLeaveRequestByAdmin = async (req, res) => {
     const updatedLeaveRequest = await leaveRequest.save();
 
     if (status === 'approved') {
-      // Add logic for 'approved' status
       const newAttendance = new Attendance({
         user: updatedLeaveRequest.user,
         date: updatedLeaveRequest.startDate,
