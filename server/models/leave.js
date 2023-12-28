@@ -30,6 +30,9 @@ const leaveSchema = new mongoose.Schema(
     message: {
       type: String,
     },
+    approvedby: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
