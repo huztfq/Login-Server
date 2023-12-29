@@ -183,16 +183,13 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         if (status.toLowerCase() === 'approved' && (leaveType === 'sick' || leaveType === 'casual')) {
           await Attendance.updateOne(
-            { user: userid },
-            { date },
-            { status: 'absent'},
-            { leaveType } ,
+            { user: userid, date },
+            { $set: { status: 'absent', leaveType, approvedby: name } },
           );
         } else if (status.toLowerCase() === 'approved' && (leaveType === 'pto' || leaveType === 'halfday')) {
           await Attendance.updateOne(
-            { user: userid },
-            { date },
-            { status: leaveType },
+            { user: userid, date },
+            { $set: { status: leaveType, approvedby: name } },
           );
         }
       }
@@ -202,6 +199,12 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       await updateAttendance(currentDate);
     }
 
+    // Update leave request status and approvedby
+    await Leave.updateOne(
+      { _id: leaveID },
+      { $set: { status, approvedby: name } },
+    );
+
     return res.status(200).json({ message: 'Leave request approved successfully' });
   } catch (error) {
     console.error('Error in approveLeaveRequestByAdmin:', error);
@@ -209,7 +212,7 @@ const approveLeaveRequestByAdmin = async (req, res) => {
   }
 };
 
-  const getDatesBetween = (startDate, endDate) => {
+const getDatesBetween = (startDate, endDate) => {
   const dates = [];
   let currentDate = new Date(startDate);
 
