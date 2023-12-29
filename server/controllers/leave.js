@@ -1,12 +1,11 @@
 const Leave = require('../models/leave');
 const User = require('../models/user');
 const Attendance = require('../models/attendance');
-const jwt = require('jsonwebtoken');
 
 const createSickLeave = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { startDate, leaveType, message } = req.body;
+    const { startDate, endDate, leaveType, message, multipleDates } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required.' });
@@ -32,12 +31,27 @@ const createSickLeave = async (req, res) => {
       return res.status(400).json({ message: 'Invalid leaveType. Allowed values are casual and sick.' });
     }
 
+    let workingDays;
+
+    if (multipleDates) {
+      const parsedStartDate = new Date(startDate);
+      const parsedEndDate = new Date(endDate);
+      workingDays = calculateWorkingDays(parsedStartDate, parsedEndDate);
+    } else {
+      console.log('Not Calculated');
+      workingDays = 0;
+    }
+
+    console.log('workingDays:', workingDays);
+
     const newLeave = new Leave({
       user: userId,
       startDate,
+      endDate,
       leaveType,
       message,
       status: 'pending',
+      workingDays,
     });
 
     const savedLeave = await newLeave.save();
@@ -46,16 +60,35 @@ const createSickLeave = async (req, res) => {
       _id: savedLeave._id,
       user: savedLeave.user,
       startDate: savedLeave.startDate,
+      endDate: savedLeave.endDate,
       leaveType: savedLeave.leaveType,
       status: savedLeave.status,
       message: savedLeave.message,
+      workingDays: savedLeave.workingDays,  
     });
+    
   } catch (error) {
     console.error('Error creating leave:', error);
     console.error('Request details:', { params: req.params, body: req.body });
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
+
+const calculateWorkingDays = (startDate, endDate) => {
+  let workingDays = 0;
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      workingDays++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return workingDays;
+};
+
 
 const getLeaveRequestsForAdmin = async (req, res) => {
   try {
@@ -69,10 +102,12 @@ const getLeaveRequestsForAdmin = async (req, res) => {
       _id: leave._id,
       user: leave.user,
       startDate: leave.startDate,
+      endDate: leave.endDate,
       leaveType: leave.leaveType,
       status: leave.status,
       message: leave.message,
       approvedby: leave.approvedby,
+      workingDays: leave.workingDays,
     }));
 
     return res.status(200).json(responseLeaveRequests);
@@ -96,8 +131,12 @@ const getUserLeaveRequests = async (req, res) => {
       status: leave.status,
       name: leave.user.name,
       leaveDate: leave.startDate,
+      endDate: leave.endDate, 
       leaveType: leave.leaveType,
       status: leave.status,
+      message: leave.message,
+      approvedby: leave.approvedby,
+      
     }));
 
     return res.status(200).json({ user: user.name, leaveRequests: formattedLeaveRequests });
@@ -114,7 +153,7 @@ const getUserLeaveRequests = async (req, res) => {
 
 const approveLeaveRequestByAdmin = async (req, res) => {
   try {
-    const { leaveID, status, name} = req.body;
+    const { leaveID, status, name, userid } = req.body;
 
     if (!leaveID || !status) {
       console.error('Leave ID or status is missing in the request body.');
@@ -127,48 +166,61 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       return res.status(404).json({ message: 'Leave request not found' });
     }
 
-    leaveRequest.status = status;
-    leaveRequest.approvedby = name;
-    const updatedLeaveRequest = await leaveRequest.save();
+    const user = await User.findById(userid);
+    if (!user) {
+      console.error('User not found. UserID:', userid);
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    if (status === 'approved') {
-      const newAttendance = new Attendance({
-        user: updatedLeaveRequest.user,
-        date: updatedLeaveRequest.startDate,
-        status: 'present',
-        leaveType: updatedLeaveRequest.leaveType,
-      });
-      await newAttendance.save();
+    const leaveType = leaveRequest.leaveType.toLowerCase();
 
-      if (updatedLeaveRequest.leaveType === 'casual' || updatedLeaveRequest.leaveType === 'sick') {
-        const user = await User.findById(updatedLeaveRequest.user);
-        if (user) {
-          if (updatedLeaveRequest.leaveType === 'casual') {
-            user.casualDays -= 1;
-          } else if (updatedLeaveRequest.leaveType === 'sick') {
-            user.sickDays -= 1;
-          }
-          await user.save();
+    const startDate = new Date(leaveRequest.startDate);
+    const endDate = new Date(leaveRequest.endDate);
+    const datesToUpdate = getDatesBetween(startDate, endDate);
+
+    const updateAttendance = async (date) => {
+      const dayOfWeek = new Date(date).getDay();
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        if (status.toLowerCase() === 'approved' && (leaveType === 'sick' || leaveType === 'casual')) {
+          await Attendance.updateOne(
+            { user: userid, date },
+            { $set: { status: 'absent', leaveType } }
+          );
+        } else if (status.toLowerCase() === 'approved' && (leaveType === 'pto' || leaveType === 'halfday')) {
+          await Attendance.updateOne(
+            { user: userid, date },
+            { $set: { status: leaveType, leaveType } }
+          );
         }
       }
-    } else if (status === 'declined') {
-      if (leaveRequest.status === 'pending') {
-        leaveRequest.status = 'declined';
-        await leaveRequest.save();
-      }
+    };
+
+    for (const currentDate of datesToUpdate) {
+      await updateAttendance(currentDate);
     }
 
-    res.status(200).json({ message: 'Leave request updated successfully' });
+    return res.status(200).json({ message: 'Leave request approved successfully' });
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      console.error('Validation Error:', error.errors);
-      res.status(400).json({ message: 'Leave validation failed', errors: error.errors });
-    } else {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
+    console.error('Error in approveLeaveRequestByAdmin:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+  const getDatesBetween = (startDate, endDate) => {
+  const dates = [];
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      dates.push(new Date(currentDate));
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return dates;
+};
+
 
 module.exports = {
   getUserLeaveRequests,
