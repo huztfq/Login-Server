@@ -43,9 +43,7 @@ export class GetRequestComponent implements OnInit {
       }
     );
   }
-  
-  // ...
-  
+
   approveLeave(leaveID: string) {
     const name = this.authService.getUserName() || '';
   
