@@ -82,7 +82,7 @@ async function calculateAttendance(user) {
   if (today < probationEndDate) {
     today = new Date(probationEndDate);
   }
-  
+
   const workingDaysArray = getWorkingDaysArray(probationEndDate, today);
 
   const existingAttendance = await Attendance.find({
@@ -114,6 +114,12 @@ async function calculateAttendance(user) {
   let sickLeaves = 0;
   let casualLeaves = 0;
   let halfDays = 0;
+  let remainingPTO = 0; 
+  
+  const totalPTODays = 15;
+  const elapsedMonths = Math.max(0, today.getMonth() - probationEndDate.getMonth() + 12 * (today.getFullYear() - probationEndDate.getFullYear()));
+  const ptoDaysAllowed = totalPTODays / 12;
+  remainingPTO = Math.max(0, ptoDaysAllowed * elapsedMonths);
 
   userAttendance.forEach((attendance) => {
     if (attendance.status === 'present' && !attendance.leaveType) {
@@ -125,23 +131,18 @@ async function calculateAttendance(user) {
       daysPresent -= 0.5;
       halfDays++;
     }
-  
+
     if (attendance.leaveType === 'sick') {
       sickLeaves++;
     } else if (attendance.leaveType === 'casual') {
       casualLeaves++;
     }
-    if (attendance.leaveType === 'PTO') {
+    if (attendance.status === 'PTO') {
       daysPresent--;
+      remainingPTO--;
     }
   });
 
-  const totalPTODays = 15;
-  const elapsedMonths = Math.max(0, today.getMonth() - probationEndDate.getMonth() + 12 * (today.getFullYear() - probationEndDate.getFullYear()));
-  const ptoDaysAllowed = totalPTODays / 12;
-  const remainingPTO = Math.max(0, ptoDaysAllowed * elapsedMonths);
-
-  // Format probation end date as "1 Dec 2023"
   const formattedProbationEndDate = `${probationEndDate.getDate()} ${getMonthName(probationEndDate.getMonth())} ${probationEndDate.getFullYear()}`;
 
   const attendanceSummary = {
