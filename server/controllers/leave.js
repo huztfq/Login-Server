@@ -183,13 +183,16 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         if (status.toLowerCase() === 'approved' && (leaveType === 'sick' || leaveType === 'casual')) {
           await Attendance.updateOne(
-            { user: userid, date },
-            { $set: { status: 'absent', leaveType } }
+            { user: userid },
+            { date },
+            { status: 'absent'},
+            { leaveType } ,
           );
         } else if (status.toLowerCase() === 'approved' && (leaveType === 'pto' || leaveType === 'halfday')) {
           await Attendance.updateOne(
-            { user: userid, date },
-            { $set: { status: leaveType, leaveType } }
+            { user: userid },
+            { date },
+            { status: leaveType },
           );
         }
       }
