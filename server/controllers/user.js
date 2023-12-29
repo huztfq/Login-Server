@@ -62,7 +62,6 @@ async function handleUserLogin(req, res) {
     );
 
     setUser(token, user);
-      console.log(user)
     const resObject = {
       userId: user._id,
       token,

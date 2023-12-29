@@ -60,9 +60,11 @@ user: {
 };
 status: 'pending' | 'approved' | 'rejected';
 startDate: string;
+endDate: string;
 leaveType: 'casual' | 'sick' | null;
 message: string;
 approvedby: string;
+workingDays: number;
 }
 
 export interface ILeaveRequestResponse {
