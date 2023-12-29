@@ -65,36 +65,31 @@ export class AddRequestComponent implements OnInit {
   makeLeaveRequest() {
     this.showLeaveRequestForm = true;
   }
-
   submitLeaveRequest() {
-    if(this.multipleDays){
+    if (this.multipleDays) {
       this.validateDate();
     }
-
+  
     if (!this.dateForm.valid) {
       return;
     }
-
-    console.log(this.dateForm.value, this.multipleDays);
-    return;
-
-    // const data: ISubmitRequest = {
-    //   startDate: this.leaveRequest.to,
-    //   leaveType: this.leaveRequest.leaveType,
-    // };
-
-    // console.log(this.leaveRequest);
-
-    return;
-    // this.dashboardService.makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data).subscribe(
-    //   (response: any) => {
-    //     this.showLeaveRequestForm = false;
-    //     this.getLeaveDetails();
-    //   },
-    //   (error) => {
-    //     console.error('Error making leave request', error);
-    //   },
-    // );
+  
+    const data: ISubmitRequest = {
+      startDate: this.dateForm.value.startDate,
+      endDate: this.dateForm.value.endDate,
+      leaveType: this.dateForm.value.selection,
+      message: this.dateForm.value.reason,
+    };
+  
+    this.dashboardService.makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data).subscribe(
+      (response: any) => {
+        this.showLeaveRequestForm = false;
+        this.getLeaveDetails();
+      },
+      (error) => {
+        console.error('Error making leave request', error);
+      },
+    );
   }
 
   toggleLeaveRequestForm() {
