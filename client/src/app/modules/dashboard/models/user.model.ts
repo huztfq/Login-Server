@@ -39,7 +39,6 @@ export interface ISubmitRequest{
   startDate: string;
   endDate: string;
   leaveType?: 'casual' | 'sick' | "halfday" | "PTO" | null;
-  status?: "present" | "absent" | "halfday";
   message?: string;
 }
 
