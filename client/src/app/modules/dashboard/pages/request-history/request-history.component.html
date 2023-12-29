@@ -9,6 +9,7 @@
                 <th class="w-1/6 py-3 text-left">Name</th>
                 <th class="w-1/6 py-3 text-left">Requested Date</th>
                 <th class="w-1/6 py-3 text-left">Leave Type</th>
+                <th class="w-1/6 py-3 text-left">Approved By</th>
                 <th class="w-1/6 py-3 text-left">Status</th>
             </tr>
         </thead>
@@ -18,6 +19,7 @@
                     <td class="py-2">{{ request.user.name }}</td>
                     <td class="py-2">{{ request.startDate | date:'yyyy-MM-dd' }}</td>
                     <td class="py-2">{{ request.leaveType }}</td>
+                    <td class="py-2">{{ request.approvedby }}</td>
                     <td class="py-2">
                         <span *ngIf="request.status === 'approved'" class="text-white">
                             <button class="bg-green-600 px-2 py-1 rounded-full">Approved</button>

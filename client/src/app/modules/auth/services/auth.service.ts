@@ -27,6 +27,10 @@ export class AuthService {
     return this.getUserData()?.role
   }
 
+  public getUserName(): string | undefined {
+    return this.getUserData()?.name
+  }
+
   public getUserData(): ILoginResponse | null {
     const userDataString = localStorage.getItem('userData');
     return userDataString ? JSON.parse(userDataString) : null;

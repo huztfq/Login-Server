@@ -14,7 +14,7 @@ export class AddRequestComponent implements OnInit {
   private userId: string = '';
   leaveDetails: any;
   selectedDate: string = new Date().toISOString().split('T')[0];
-  leaveRequest: { date: string, leaveType: 'casual' | 'sick' } = { date: '', leaveType: 'casual' };
+  leaveRequest: { date: string, leaveType: 'casual' | 'sick', message: string } = { date: '', leaveType: 'casual', message: '' };
   showLeaveRequestForm: boolean = false;
 
   constructor(
@@ -48,12 +48,12 @@ export class AddRequestComponent implements OnInit {
   }
 
   submitLeaveRequest() {
-    // Ensure leaveRequest.date is set to the selectedDate
     this.leaveRequest.date = this.selectedDate;
   
     const data: ISubmitRequest = {
       startDate: this.leaveRequest.date,
       leaveType: this.leaveRequest.leaveType,
+      message: this.leaveRequest.message,
     };
     
     console.log(data);

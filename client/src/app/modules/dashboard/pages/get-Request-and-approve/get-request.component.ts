@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { ILeaveRequest } from '../../models/user.model';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import { request } from 'http';
+import { response } from 'express';
 
 @Component({
   selector: 'app-get-request',
@@ -14,7 +17,8 @@ export class GetRequestComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -27,15 +31,29 @@ export class GetRequestComponent implements OnInit {
         this.leaveRequests = response.filter(
           (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'rejected'
         );
+  
+        const userIdSet = new Set<string>();
+        for (const request of this.leaveRequests) {
+          userIdSet.add(request.user._id);
+        }
+  
       },
       (error) => {
         console.error('Error fetching leave requests', error);
       }
     );
   }
-
+  
+  // ...
+  
   approveLeave(leaveID: string) {
-    this.dashboardService.approveLeaveRequest(leaveID, 'approved').subscribe(
+    const name = this.authService.getUserName() || '';
+  
+    const leaveRequest = this.leaveRequests.find((request) => request._id === leaveID);
+  
+    const userid = leaveRequest?.user._id || '';
+  
+    this.dashboardService.approveLeaveRequest(leaveID, 'approved', name, userid).subscribe(
       () => {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
@@ -46,9 +64,15 @@ export class GetRequestComponent implements OnInit {
       }
     );
   }
-
+  
   declineLeave(leaveID: string) {
-    this.dashboardService.approveLeaveRequest(leaveID, 'rejected').subscribe(
+    const name = this.authService.getUserName() || '';
+  
+    const leaveRequest = this.leaveRequests.find((request) => request._id === leaveID);
+  
+    const userid = leaveRequest?.user._id || '';
+  
+    this.dashboardService.approveLeaveRequest(leaveID, 'rejected', name, userid).subscribe(
       () => {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';

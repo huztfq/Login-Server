@@ -44,8 +44,8 @@ export class DashboardService {
     return this.http.post(APIURL + `leave/createLeave/${userId}`, data);
   }
 
-  public approveLeaveRequest(leaveID: string, status: 'approved' | 'rejected') {
-    const requestBody = { leaveID, status };
+  public approveLeaveRequest(leaveID: string, status: 'approved' | 'rejected', name: string, userid: string) {
+    const requestBody = { leaveID, status, name, userid };
   
     return this.http.post(`${APIURL}leave/approveLeaveRequestByAdmin`, requestBody);
   }

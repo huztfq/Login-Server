@@ -11,7 +11,13 @@
                       Name
                   </th>
                   <th scope="col" class="px-6 py-3">
+                      Designation
+                  </th>
+                  <th scope="col" class="px-6 py-3">
                       Joining Date
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                      Probation Ended
                   </th>
                   <th scope="col" class="px-6 py-3">
                       Presents
@@ -20,8 +26,8 @@
                       Absents
                   </th>
                   <th scope="col" class="px-6 py-3">
-                      Designation
-                  </th>
+                      Half Days
+                 </th>
                   <th scope="col" class="px-6 py-3">
                       PTO Remaining
                   </th>
@@ -38,8 +44,13 @@
                      {{ user.name }}
                   </th>
                   <td class="px-6 py-4">
+                    {{ user.designation }}
+                  </td>
+                  <td class="px-6 py-4">
                     {{ user.joiningDate | date }}
                   </td>
+                  <td class="px-6 py-4">
+                    {{ user.probationEndDate | date }}
                   <td class="px-6 py-4">
                     {{ user.daysPresent }}
                   </td>
@@ -47,11 +58,11 @@
                     {{ user.daysAbsent }}
                   </td>
                   <td class="px-6 py-4">
-                    {{ user.designation }}
-                  </td>
+                    {{ user.halfDays }}
                   <td class="px-6 py-4">
-                    {{ user.ptoRemaining }} days
+                    {{ user.paidOff }} days
                   </td>
+
                   <td class="px-6 py-4 text-right">
                   </td>
               </tr>

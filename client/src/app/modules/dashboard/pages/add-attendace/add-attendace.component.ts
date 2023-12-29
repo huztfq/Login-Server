@@ -11,8 +11,8 @@ import { NgZone } from '@angular/core';
 })
 export class AddAttendanceComponent implements OnInit {
   selectedDate: string = new Date().toISOString().split('T')[0];
-  attendanceStatus: 'present' | 'absent' = 'present';
-  leaveType: 'casual' | 'sick' | null = null;
+  attendanceStatus: 'present' | 'absent' | 'halfday' | 'PTO'= 'present';
+  leaveType: 'casual' | 'sick' | null = null; 
   workLocation: 'remote' | 'onsite' | null = null;
   selectedEmployeeId: string = '';
   employees: IUser[] = [];
@@ -48,13 +48,23 @@ export class AddAttendanceComponent implements OnInit {
   }
 
   submitAttendance() {
-    const data: ISubmitAttendance = {
-      userId: this.selectedEmployeeId,
-      date: this.selectedDate,
-      leaveType: this.leaveType,
-      status: this.attendanceStatus,
-    };
-
+    let data: ISubmitAttendance;
+  
+    if (this.attendanceStatus === 'PTO' || this.attendanceStatus === 'halfday') {
+      data = {
+        userId: this.selectedEmployeeId,
+        date: this.selectedDate,
+        status: this.attendanceStatus as 'PTO' | 'halfday',
+      };
+    } else {
+      data = {
+        userId: this.selectedEmployeeId,
+        date: this.selectedDate,
+        leaveType: this.leaveType,
+        status: this.attendanceStatus as 'present' | 'absent' | 'halfday' | null,
+      };
+    }
+  
     this.dashboardService.submitAttendance(data, this.selectedEmployeeId).subscribe(
       (res) => {
         this.router.navigate(['dashboard/home']);
