@@ -79,18 +79,16 @@ async function calculateAttendance(user) {
   const probationEndDate = new Date(joinDate);
   probationEndDate.setMonth(joinDate.getMonth() + 3);
 
-  if (today < probationEndDate) {
-    today = new Date(probationEndDate);
-  }
-
-  const workingDaysArray = getWorkingDaysArray(probationEndDate, today);
+  const workingDaysArray = getWorkingDaysArray(joinDate, today);
 
   const existingAttendance = await Attendance.find({
     user: user._id,
-    date: { $gte: probationEndDate, $lte: today },
+    date: { $gte: joinDate, $lte: today },
   });
 
-  const existingDates = existingAttendance.map((record) => record.date.toISOString());
+  const existingDates = existingAttendance.map((record) =>
+    record.date.toISOString()
+  );
 
   const missingDates = workingDaysArray.filter(
     (date) => !existingDates.includes(date.toISOString())
@@ -106,7 +104,7 @@ async function calculateAttendance(user) {
 
   const userAttendance = await Attendance.find({
     user: user._id,
-    date: { $gte: probationEndDate, $lte: today },
+    date: { $gte: joinDate, $lte: today },
   });
 
   let daysPresent = 0;
@@ -114,36 +112,40 @@ async function calculateAttendance(user) {
   let sickLeaves = 0;
   let casualLeaves = 0;
   let halfDays = 0;
-  let remainingPTO = 0; 
-  
+  let remainingPTO = 0;
+
   const totalPTODays = 15;
-  const elapsedMonths = Math.max(0, today.getMonth() - probationEndDate.getMonth() + 12 * (today.getFullYear() - probationEndDate.getFullYear()));
+  const elapsedMonths = Math.max(
+    0,
+    today.getMonth() - probationEndDate.getMonth() + 12 * (today.getFullYear() - probationEndDate.getFullYear())
+  );
   const ptoDaysAllowed = totalPTODays / 12;
   remainingPTO = Math.max(0, ptoDaysAllowed * elapsedMonths);
+  let paidOff = remainingPTO;  
 
   userAttendance.forEach((attendance) => {
     if (attendance.status === 'present' && !attendance.leaveType) {
-      daysPresent++;
+      daysPresent += 1; 
     } else if (attendance.status === 'absent') {
-      daysAbsent++;
-      daysPresent--;
+      daysAbsent += 1;
     } else if (attendance.status === 'halfday') {
-      daysPresent -= 0.5;
-      halfDays++;
+      daysPresent += 0.5; 
+      halfDays += 1;
     }
 
     if (attendance.leaveType === 'sick') {
-      sickLeaves++;
+      sickLeaves += 1;
     } else if (attendance.leaveType === 'casual') {
-      casualLeaves++;
+      casualLeaves += 1;
     }
-    if (attendance.status === 'PTO') {
-      daysPresent--;
-      remainingPTO--;
+    if (attendance.status === 'PTO' || attendance.status === 'pto') {
+       paidOff -= 1; 
     }
   });
 
-  const formattedProbationEndDate = `${probationEndDate.getDate()} ${getMonthName(probationEndDate.getMonth())} ${probationEndDate.getFullYear()}`;
+  const formattedProbationEndDate = `${probationEndDate.getDate()} ${getMonthName(
+    probationEndDate.getMonth()
+  )} ${probationEndDate.getFullYear()}`;
 
   const attendanceSummary = {
     _id: user._id,
@@ -156,18 +158,28 @@ async function calculateAttendance(user) {
     sickLeaves,
     casualLeaves,
     halfDays,
-    remainingPTO,
+    paidOff,
   };
 
   return attendanceSummary;
 }
 
-function getMonthName(monthIndex) {
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+function getMonthName(month) {
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
-  return months[monthIndex];
+  return monthNames[month];
 }
 
 function getWorkingDaysArray(startDate, endDate) {
