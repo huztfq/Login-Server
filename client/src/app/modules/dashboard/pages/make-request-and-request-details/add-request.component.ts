@@ -4,59 +4,82 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ISubmitRequest } from '../../models/user.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-add-request',
   templateUrl: './add-request.component.html',
-  styleUrls: ['./add-request.component.scss']
+  styleUrls: ['./add-request.component.scss'],
 })
 export class AddRequestComponent implements OnInit {
   private userId: string = '';
   leaveDetails: any;
-  selectedDate: string = new Date().toISOString().split('T')[0];
-  leaveRequest: { date: string, leaveType: 'casual' | 'sick', message: string } = { date: '', leaveType: 'casual', message: '' };
   showLeaveRequestForm: boolean = false;
+  dateForm!: FormGroup;
+  multipleDays: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardService,
-    private authService: AuthService
+    private authService: AuthService,
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       this.userId = params.get('userId') || '';
       this.getLeaveDetails();
     });
+
+    this.dateForm = this.fb.group({
+      startDate: ['', Validators.required],
+      endDate: [''],
+      selection: ['', Validators.required],
+      reason: ['', Validators.required],
+    });
+  }
+
+  validateDate() {
+    const startDate = this.dateForm.get('startDate')?.value;
+    const endDate = this.dateForm.get('endDate')?.value;
+    if (startDate && endDate && startDate >= endDate) {
+      this.dateForm.get('endDate')?.setErrors({ invalidDate: true });
+    } else {
+      this.dateForm.get('endDate')?.setErrors(null);
+    }
   }
 
   getLeaveDetails() {
     const userId = this.authService.getUserData()?.userId;
-    this.dashboardService.getLeaveDetailsById(userId ?? "").subscribe(
+    this.dashboardService.getLeaveDetailsById(userId ?? '').subscribe(
       (response: any) => {
         this.leaveDetails = response;
       },
       (error) => {
         console.error('Error fetching leave details', error);
-      }
+      },
     );
   }
 
   makeLeaveRequest() {
     this.showLeaveRequestForm = true;
   }
-
   submitLeaveRequest() {
-    this.leaveRequest.date = this.selectedDate;
+    if (this.multipleDays) {
+      this.validateDate();
+    }
+  
+    if (!this.dateForm.valid) {
+      return;
+    }
   
     const data: ISubmitRequest = {
-      startDate: this.leaveRequest.date,
-      leaveType: this.leaveRequest.leaveType,
-      message: this.leaveRequest.message,
+      startDate: this.dateForm.value.startDate,
+      endDate: this.dateForm.value.endDate,
+      leaveType: this.dateForm.value.selection,
+      message: this.dateForm.value.reason,
     };
-    
-    console.log(data);
   
     this.dashboardService.makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data).subscribe(
       (response: any) => {
@@ -65,11 +88,25 @@ export class AddRequestComponent implements OnInit {
       },
       (error) => {
         console.error('Error making leave request', error);
-      }
+      },
     );
   }
-  
+
   toggleLeaveRequestForm() {
     this.showLeaveRequestForm = !this.showLeaveRequestForm;
+  }
+
+  toggleMultipleDay() {
+    this.multipleDays = !this.multipleDays;
+
+    const endDateControl = this.dateForm.get('endDate');
+
+    if (this.multipleDays) {
+      endDateControl?.setValidators([Validators.required]);
+    } else {
+      endDateControl?.clearValidators();
+    }
+
+    endDateControl?.updateValueAndValidity();
   }
 }
