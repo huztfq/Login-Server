@@ -27,7 +27,7 @@ const createSickLeave = async (req, res) => {
       });
     }
 
-    if (!['casual', 'sick'].includes(leaveType.toLowerCase().trim())) {
+    if (!['casual', 'sick', 'pto', 'halfday'].includes(leaveType.toLowerCase().trim())) {
       return res.status(400).json({ message: 'Invalid leaveType. Allowed values are casual and sick.' });
     }
 
@@ -38,11 +38,8 @@ const createSickLeave = async (req, res) => {
       const parsedEndDate = new Date(endDate);
       workingDays = calculateWorkingDays(parsedStartDate, parsedEndDate);
     } else {
-      console.log('Not Calculated');
       workingDays = 0;
     }
-
-    console.log('workingDays:', workingDays);
 
     const newLeave = new Leave({
       user: userId,
@@ -152,6 +149,7 @@ const getUserLeaveRequests = async (req, res) => {
 };
 
 const approveLeaveRequestByAdmin = async (req, res) => {
+
   try {
     const { leaveID, status, name, userid } = req.body;
 
@@ -172,7 +170,7 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const leaveType = leaveRequest.leaveType.toLowerCase();
+    const leaveType = leaveRequest.leaveType;
 
     const startDate = new Date(leaveRequest.startDate);
     const endDate = new Date(leaveRequest.endDate);
@@ -180,26 +178,39 @@ const approveLeaveRequestByAdmin = async (req, res) => {
 
     const updateAttendance = async (date) => {
       const dayOfWeek = new Date(date).getDay();
+
+      const payload = {
+        user: userid,
+        date,
+        approvedby: name,
+      }
+
+      let attendance;
+
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         if (status.toLowerCase() === 'approved' && (leaveType === 'sick' || leaveType === 'casual')) {
-          await Attendance.updateOne(
-            { user: userid, date },
-            { $set: { status: 'absent', leaveType, approvedby: name } },
-          );
+          attendance =  new Attendance({
+            ...payload,
+            status: 'absent',
+            leaveType,
+          });
+          await attendance.save();
+
         } else if (status.toLowerCase() === 'approved' && (leaveType === 'pto' || leaveType === 'halfday')) {
-          await Attendance.updateOne(
-            { user: userid, date },
-            { $set: { status: leaveType, approvedby: name } },
-          );
+          attendance = new Attendance({
+            ...payload,
+            status: leaveType,
+          });
+          await attendance.save();
         }
       }
     };
 
     for (const currentDate of datesToUpdate) {
+      console.warn("currentDate:", currentDate)
       await updateAttendance(currentDate);
     }
 
-    // Update leave request status and approvedby
     await Leave.updateOne(
       { _id: leaveID },
       { $set: { status, approvedby: name } },
@@ -226,7 +237,6 @@ const getDatesBetween = (startDate, endDate) => {
 
   return dates;
 };
-
 
 module.exports = {
   getUserLeaveRequests,
