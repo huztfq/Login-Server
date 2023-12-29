@@ -3,55 +3,96 @@
 </ng-container>
 
 <ng-template #showLeaveDetails>
-  <div class="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
-    <h2 class="text-2xl font-bold mb-4">Leave Details</h2>
+  <div class="m-4 mx-auto max-w-2xl rounded-md bg-white p-6 shadow-md">
+    <h2 class="mb-4 text-2xl font-bold">Leave Details</h2>
 
     <!-- Recent Leave Requests -->
-    <h3 class="text-lg font-bold mb-4">Recent Leave Requests</h3>
+    <h3 class="mb-4 text-lg font-bold">Recent Leave Requests</h3>
     <div class="max-h-96 overflow-y-auto">
-      <div *ngFor="let request of leaveDetails.leaveRequests" class="mb-4">
-        <div class="flex items-center mb-2">
-          <span class="text-gray-700 text-sm font-bold mr-2">Request Date:</span>
-          <span>{{ request.leaveDate | date:'yyyy-MM-dd' }}</span>
+      <div *ngFor="let request of leaveDetails.leaveRequests" class="mb-4 border rounded-md p-4">
+        <!-- Box for each leave request -->
+        <div class="mb-2 flex items-center">
+          <span class="mr-2 text-sm font-bold text-gray-700">Request Date:</span>
+          <span>{{ request.leaveDate | date: 'yyyy-MM-dd' }}</span>
         </div>
-        <div class="flex items-center mb-2">
-          <span class="text-gray-700 text-sm font-bold mr-2">Leave Type:</span>
+        <div class="mb-2 flex items-center">
+          <span class="mr-2 text-sm font-bold text-gray-700">End Date:</span>
+          <span>{{ request.endDate | date: 'yyyy-MM-dd' }}</span>
+        </div>
+        <div class="mb-2 flex items-center">
+          <span class="mr-2 text-sm font-bold text-gray-700">Leave Type:</span>
           <span>{{ request.leaveType }}</span>
         </div>
-        <div class="flex items-center mb-2">
-          <span class="text-gray-700 text-sm font-bold mr-2">Status:</span>
+        <div class="mb-2 flex items-center">
+          <span class="mr-2 text-sm font-bold text-gray-700">Working Days:</span>
+          <span>{{ request.workingDays }}</span>
+        </div>
+        <div class="mb-2 flex items-center">
+          <span class="mr-2 text-sm font-bold text-gray-700">Status:</span>
           <span>{{ request.status }}</span>
         </div>
       </div>
     </div>
 
     <!-- Button to show/hide form -->
-    <div class="flex justify-end mt-4">
-      <button class="bg-primary-500 text-white py-2 px-4 rounded" (click)="makeLeaveRequest()">Make Request</button>
+    <div class="mt-4 flex justify-end">
+      <button class="rounded bg-primary-500 py-2 px-4 text-white" (click)="makeLeaveRequest()">Make Request</button>
     </div>
 
-    <!-- Form for leave request -->
-    <form *ngIf="showLeaveRequestForm" (ngSubmit)="submitLeaveRequest()" class="mt-4">
-      <div class="mb-4">
-        <label for="leaveDate" class="block text-sm font-bold text-gray-700">Leave Date:</label>
-        <input type="date" id="leaveDate" [(ngModel)]="leaveRequest.date" class="form-input">
+    <form *ngIf="showLeaveRequestForm" [formGroup]="dateForm" class="mt-4" (ngSubmit)="submitLeaveRequest()">
+      <label class="relative mb-4 inline-flex cursor-pointer items-center">
+        <input type="checkbox" [checked]="multipleDays" (change)="toggleMultipleDay()" class="peer sr-only" />
+        <div
+          class="after:start-[2px] peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+        <span class="ms-3 ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Request for multiple dates</span>
+      </label>
+
+      <div class="mb-4 flex gap-4">
+        <div class="flex-auto">
+          <label for="startDate" class="block text-sm font-bold text-gray-700">{{
+            !multipleDays ? 'Leave Date:' : 'Start Date:'
+          }}</label>
+          <input type="date" id="startDate" formControlName="startDate" class="form-input" />
+        </div>
+
+        <div class="flex-auto" *ngIf="multipleDays">
+          <label for="endDate" class="block text-sm font-bold text-gray-700">End Date:</label>
+          <input type="date" id="endDate" formControlName="endDate" class="form-input" />
+          <div
+            class="text-xs text-red-500"
+            *ngIf="dateForm.get('endDate')!.hasError('invalidDate') && dateForm.get('endDate')!.touched">
+            End date must be greater than start date.
+          </div>
+        </div>
       </div>
-      
-      <div class="mb-4">
-        <label for="leaveType" class="block text-sm font-bold text-gray-700">Leave Type:</label>
-        <select id="leaveType" [(ngModel)]="leaveRequest.leaveType" class="form-select">
+
+      <div class="mb-4 block text-sm font-bold text-gray-700">
+        <label for="leaveType">Leave Type:</label>
+        <select id="leaveType" formControlName="selection" class="form-select">
           <option value="casual">Casual</option>
           <option value="sick">Sick</option>
+          <option value="pto">PTO</option>
+          <option value="halfday">Half Day</option>
         </select>
       </div>
-      
-      
-      
-      <div class="flex justify-end">
-        <button type="button" class="text-primary-500 hover:underline mr-4" (click)="toggleLeaveRequestForm()">Cancel</button>
-        <button type="submit" class="bg-primary-500 text-white py-2 px-4 rounded" (clock)="submitLeaveRequest()">Submit</button>
+
+      <div class="mb-4 block text-sm font-bold text-gray-700">
+        <label for="reason">Reason:</label>
+        <textarea id="reason" formControlName="reason"></textarea>
       </div>
-      <!-- Form contentas before -->
+
+      <div class="flex justify-end">
+        <button type="button" class="mr-4 text-primary-500 hover:underline" (click)="toggleLeaveRequestForm()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="dateForm.invalid"
+          class="rounded bg-primary-500 py-2 px-4 text-white"
+          (clock)="submitLeaveRequest()">
+          Submit
+        </button>
+      </div>
     </form>
   </div>
 </ng-template>
