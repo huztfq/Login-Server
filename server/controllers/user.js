@@ -206,12 +206,13 @@ async function handleUpdateEmployeeDetails(req, res) {
       return res.status(404).json({ error: "Employee not found." });
     }
 
-    const { name, email, designation, joiningDate, password } = req.body;
+    const { name, email, designation, joiningDate, password, role } = req.body;
     if (name) employee.name = name;
     if (email) employee.email = email;
     if (designation) employee.designation = designation;
     if (joiningDate) employee.joiningDate = new Date(joiningDate);
     if (password) employee.password = password;
+    if (role) employee.role = role;
 
     await employee.save();
 
