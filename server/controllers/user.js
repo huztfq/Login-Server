@@ -239,7 +239,6 @@ async function handleDeleteEmployee(req, res) {
     }
 
     return res.json({ message: `Deleted user with ID ${userId} successfully.` });
-    this.router.navigate([`dashboard/signin`]);
 
   } catch (error) {
     console.error(error);

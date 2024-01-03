@@ -14,6 +14,5 @@ router.get("/info", handleInfo);
 router.post("/deleteEmployees/:userId",authMiddleware.authenticateToken, handleDeleteEmployees);
 router.get("/fetchEmployeeDetails/:userId", authMiddleware.authenticateToken, handleFetchEmployeeDetails);
 router.post("/updateEmployeeDetails/:userId", authMiddleware.authenticateToken, handleUpdateEmployeeDetails);
-router.post("/deleteEmployee/:userId",authMiddleware.authenticateToken, handleDeleteEmployee);
 
 module.exports = router;
