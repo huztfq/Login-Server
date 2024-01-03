@@ -5,6 +5,7 @@ import { ILeaveRequest } from '../../models/user.model';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { request } from 'http';
 import { response } from 'express';
+import { MenuService } from 'src/app/modules/layout/services/menu.service';
 
 @Component({
   selector: 'app-get-request',
@@ -18,7 +19,8 @@ export class GetRequestComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardService,
-    private authService: AuthService
+    private authService: AuthService,
+    private menuService: MenuService
   ) {}
 
   ngOnInit() {
@@ -31,6 +33,7 @@ export class GetRequestComponent implements OnInit {
         this.leaveRequests = response.filter(
           (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'rejected'
         );
+        this.menuService.leaveRequests.next(this.leaveRequests.length);
   
         const userIdSet = new Set<string>();
         for (const request of this.leaveRequests) {
