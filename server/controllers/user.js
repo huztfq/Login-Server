@@ -222,6 +222,28 @@ async function handleUpdateEmployeeDetails(req, res) {
   }
 }
 
+async function handleDeleteEmployee(req, res) {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+    const requestingUser = await User.findById(userId);
+    if (!requestingUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not deleted." });
+    }
+
+    return res.json({ message: `Deleted user with ID ${userId} successfully.` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error. Please try again later." });
+  }
+}
+
 
 module.exports = {
   handleUserSignup,
@@ -233,4 +255,5 @@ module.exports = {
   handleDeleteEmployees,
   handleFetchEmployeeDetails,
   handleUpdateEmployeeDetails,
+  handleDeleteEmployee,
 };
