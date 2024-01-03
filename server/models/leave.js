@@ -13,14 +13,14 @@ const leaveSchema = new mongoose.Schema(
     endDate: {
       type: Date,
     },
-    status: {
+    state: {
       type: String,
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
-    leaveType: {
+    status: {
       type: String,
-      enum: ['casual', 'sick', 'pto', 'halfday'],
+      enum: ['casual', 'sick', 'pto', 'halfday', 'absent'],
       default: null,
     },
     attendance: {

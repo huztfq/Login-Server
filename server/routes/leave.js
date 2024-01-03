@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/createLeave/:userId", authMiddleware.authenticateToken, createSickLeave);
 router.get("/leaveRequestsForAdmin", authMiddleware.authenticateToken, getLeaveRequestsForAdmin);
-router.get("/leaveRequests/:userId", authMiddleware.authenticateToken, getUserLeaveRequests); 
-router.post("/approveLeaveRequestByAdmin", authMiddleware.authenticateToken, approveLeaveRequestByAdmin);
+router.get("/leaveRequests/:userId", authMiddleware.authenticateToken,  getUserLeaveRequests); 
+router.post("/approveLeaveRequestByAdmin",authMiddleware.authenticateToken, approveLeaveRequestByAdmin);
 
 module.exports = router;

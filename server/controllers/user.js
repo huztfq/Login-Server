@@ -206,16 +206,41 @@ async function handleUpdateEmployeeDetails(req, res) {
       return res.status(404).json({ error: "Employee not found." });
     }
 
-    const { name, email, designation, joiningDate, password } = req.body;
+    const { name, email, designation, joiningDate, password, role } = req.body;
     if (name) employee.name = name;
     if (email) employee.email = email;
     if (designation) employee.designation = designation;
     if (joiningDate) employee.joiningDate = new Date(joiningDate);
     if (password) employee.password = password;
+    if (role) employee.role = role;
 
     await employee.save();
 
     return res.json({ message: "Employee details updated successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error. Please try again later." });
+  }
+}
+
+async function handleDeleteEmployee(req, res) {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+    const requestingUser = await User.findById(userId);
+    if (!requestingUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not deleted." });
+    }
+
+    return res.json({ message: `Deleted user with ID ${userId} successfully.` });
+    this.router.navigate([`dashboard/signin`]);
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error. Please try again later." });
@@ -233,4 +258,5 @@ module.exports = {
   handleDeleteEmployees,
   handleFetchEmployeeDetails,
   handleUpdateEmployeeDetails,
+  handleDeleteEmployee,
 };

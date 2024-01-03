@@ -119,4 +119,17 @@ updateEmployeeDetails() {
       this.role !== this.originalEmployeeDetails.role ||
       this.password !== this.originalEmployeeDetails.password;
   }
+  deleteEmployee() {
+    if (this.selectedEmployeeId) {
+      this.dashboardService.deleteEmployeeById(this.selectedEmployeeId).subscribe(
+        (response: any) => {
+          // Optionally handle success response
+          console.log('Employee deleted successfully.');
+        },
+        (error) => {
+          console.error('Error deleting employee:', error);
+        }
+      );
+    }
+  }
 }

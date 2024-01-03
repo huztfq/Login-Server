@@ -5,7 +5,7 @@ const Attendance = require('../models/attendance');
 const createSickLeave = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { startDate, endDate, leaveType, message, multipleDates } = req.body;
+    const { startDate, endDate, status, message, multipleDates } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required.' });
@@ -16,21 +16,57 @@ const createSickLeave = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const existingLeave = await Leave.findOne({
+    // Check if there is an existing leave entry with state 'pending'
+    const existingPendingLeave = await Leave.findOne({
       user: userId,
-      status: 'pending',
+      state: 'pending',
     });
 
-    if (existingLeave) {
-      return res.status(400).json({
-        message: 'Request Already Made, please wait for its approval before making another one.',
+    if (existingPendingLeave) {
+      return res.status(400).json({ message: 'Pending leave request already exists for the user.' });
+    }
+
+    let existingLeave;
+
+    if (multipleDates) {
+      // Check if there is an existing leave entry for each date in the range
+      const dateRange = getDatesBetween(startDate, endDate);
+      existingLeave = await Leave.findOne({
+        user: userId,
+        startDate: { $in: dateRange },
+        state: 'pending',
+      });
+    } else {
+      // Check if there is an existing leave entry for the given date
+      existingLeave = await Leave.findOne({
+        user: userId,
+        startDate,
+        state: 'pending',
       });
     }
 
-    if (!['casual', 'sick', 'pto', 'halfday'].includes(leaveType.toLowerCase().trim())) {
-      return res.status(400).json({ message: 'Invalid leaveType. Allowed values are casual and sick.' });
+    if (existingLeave) {
+      // Rewrite the existing entry if it exists
+      existingLeave.startDate = startDate;
+      existingLeave.endDate = endDate;
+      existingLeave.status = status;
+      existingLeave.message = message;
+      existingLeave.workingDays = calculateWorkingDays(new Date(startDate), new Date(endDate));
+
+      const updatedLeave = await existingLeave.save();
+
+      return res.status(200).json({
+        _id: updatedLeave._id,
+        user: updatedLeave.user,
+        startDate: updatedLeave.startDate,
+        endDate: updatedLeave.endDate,
+        status: updatedLeave.status,
+        message: updatedLeave.message,
+        workingDays: updatedLeave.workingDays,
+      });
     }
 
+    // If no existing entry, create a new one
     let workingDays;
 
     if (multipleDates) {
@@ -45,9 +81,9 @@ const createSickLeave = async (req, res) => {
       user: userId,
       startDate,
       endDate,
-      leaveType,
+      status,
       message,
-      status: 'pending',
+      state: 'pending',
       workingDays,
     });
 
@@ -61,15 +97,16 @@ const createSickLeave = async (req, res) => {
       leaveType: savedLeave.leaveType,
       status: savedLeave.status,
       message: savedLeave.message,
-      workingDays: savedLeave.workingDays,  
+      workingDays: savedLeave.workingDays,
     });
-    
+
   } catch (error) {
     console.error('Error creating leave:', error);
     console.error('Request details:', { params: req.params, body: req.body });
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
+
 
 const calculateWorkingDays = (startDate, endDate) => {
   let workingDays = 0;
@@ -86,7 +123,6 @@ const calculateWorkingDays = (startDate, endDate) => {
   return workingDays;
 };
 
-
 const getLeaveRequestsForAdmin = async (req, res) => {
   try {
     const employees = await User.find({ role: 'employee' });
@@ -100,8 +136,8 @@ const getLeaveRequestsForAdmin = async (req, res) => {
       user: leave.user,
       startDate: leave.startDate,
       endDate: leave.endDate,
-      leaveType: leave.leaveType,
       status: leave.status,
+      state: leave.state,
       message: leave.message,
       approvedby: leave.approvedby,
       workingDays: leave.workingDays,
@@ -125,7 +161,7 @@ const getUserLeaveRequests = async (req, res) => {
     const leaveRequests = await Leave.find({ user: userId }).populate('user', 'name');
 
     const formattedLeaveRequests = leaveRequests.map((leave) => ({
-      status: leave.status,
+      state: leave.state,
       name: leave.user.name,
       leaveDate: leave.startDate,
       endDate: leave.endDate, 
@@ -149,13 +185,12 @@ const getUserLeaveRequests = async (req, res) => {
 };
 
 const approveLeaveRequestByAdmin = async (req, res) => {
-
   try {
-    const { leaveID, status, name, userid } = req.body;
+    const { leaveID, name, userid, state } = req.body;
 
-    if (!leaveID || !status) {
-      console.error('Leave ID or status is missing in the request body.');
-      return res.status(400).json({ message: 'Leave ID and status are required in the request body' });
+    if (!leaveID || !state) {
+      console.error('Leave ID or state is missing in the request body.');
+      return res.status(400).json({ message: 'Leave ID and state are required in the request body' });
     }
 
     const leaveRequest = await Leave.findById(leaveID);
@@ -170,68 +205,76 @@ const approveLeaveRequestByAdmin = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const leaveType = leaveRequest.leaveType;
+    if (state.toLowerCase() === 'approved') {
+      const leaveStatus = leaveRequest.status;
+      const startDate = new Date(leaveRequest.startDate);
+      const endDate = new Date(leaveRequest.endDate);
+      const datesToUpdate = getDatesBetween(startDate, endDate);
 
-    const startDate = new Date(leaveRequest.startDate);
-    const endDate = new Date(leaveRequest.endDate);
-    const datesToUpdate = getDatesBetween(startDate, endDate);
+      const updateAttendance = async (date) => {
+        const existingAttendance = await Attendance.findOne({ user: userid, date });
 
-    const updateAttendance = async (date) => {
-      const dayOfWeek = new Date(date).getDay();
+        if (existingAttendance) {
+          await Attendance.updateOne(
+            { _id: existingAttendance._id },
+            { $set: { status: leaveStatus } }
+          );
+        } else {
+          const payload = {
+            user: userid,
+            date,
+            approvedby: name,
+            state: 'approved',
+          };
 
-      const payload = {
-        user: userid,
-        date,
-        approvedby: name,
-      }
-
-      let attendance;
-
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        if (status.toLowerCase() === 'approved' && (leaveType === 'sick' || leaveType === 'casual')) {
-          attendance =  new Attendance({
-            ...payload,
-            status: 'absent',
-            leaveType,
-          });
-          await attendance.save();
-
-        } else if (status.toLowerCase() === 'approved' && (leaveType === 'pto' || leaveType === 'halfday')) {
-          attendance = new Attendance({
-            ...payload,
-            status: leaveType,
-          });
-          await attendance.save();
+          if (leaveStatus === 'sick' || leaveStatus === 'casual' || leaveStatus === 'absent' || leaveStatus === 'halfday' || leaveStatus === 'pto') {
+            await Attendance.create({
+              ...payload,
+              status: leaveStatus,
+            });
+          }
         }
-      }
-    };
+      };
 
-    for (const currentDate of datesToUpdate) {
-      console.warn("currentDate:", currentDate)
-      await updateAttendance(currentDate);
+      for (const currentDate of datesToUpdate) {
+        console.warn("currentDate:", currentDate)
+        await updateAttendance(currentDate);
+      }
+
+      await Leave.updateOne(
+        { _id: leaveID },
+        { $set: { state: state, approvedby: name } }, // Fix: Change 'State' to 'state'
+      );
+
+      return res.status(200).json({ message: 'Leave request approved successfully' });
+
+    } else if (state.toLowerCase() === 'declined') {
+      await Leave.updateOne(
+        { _id: leaveID },
+        { $set: { state: state, approvedby: name } }, // Fix: Change 'State' to 'state'
+      );
+
+      return res.status(200).json({ message: 'Leave request declined successfully' });
+
+    } else {
+      console.error('Invalid state for leave approval. State:', state);
+      return res.status(400).json({ message: 'Invalid state for leave approval' });
     }
 
-    await Leave.updateOne(
-      { _id: leaveID },
-      { $set: { status, approvedby: name } },
-    );
-
-    return res.status(200).json({ message: 'Leave request approved successfully' });
   } catch (error) {
-    console.error('Error in approveLeaveRequestByAdmin:', error);
+    console.error('Error in handleLeaveApproval:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+
 
 const getDatesBetween = (startDate, endDate) => {
   const dates = [];
   let currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
-    const dayOfWeek = currentDate.getDay();
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      dates.push(new Date(currentDate));
-    }
+    dates.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
   }
 

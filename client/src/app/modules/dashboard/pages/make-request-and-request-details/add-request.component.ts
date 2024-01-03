@@ -43,7 +43,10 @@ export class AddRequestComponent implements OnInit {
   validateDate() {
     const startDate = this.dateForm.get('startDate')?.value;
     const endDate = this.dateForm.get('endDate')?.value;
-    if (startDate && endDate && startDate >= endDate) {
+  
+    const today = new Date();
+    
+    if (endDate && new Date(endDate) <= today) {
       this.dateForm.get('endDate')?.setErrors({ invalidDate: true });
     } else {
       this.dateForm.get('endDate')?.setErrors(null);
@@ -65,31 +68,34 @@ export class AddRequestComponent implements OnInit {
   makeLeaveRequest() {
     this.showLeaveRequestForm = true;
   }
+
   submitLeaveRequest() {
     if (this.multipleDays) {
       this.validateDate();
     }
-  
+
     if (!this.dateForm.valid) {
       return;
     }
-  
+
     const data: ISubmitRequest = {
       startDate: this.dateForm.value.startDate,
       endDate: this.dateForm.value.endDate,
       leaveType: this.dateForm.value.selection,
       message: this.dateForm.value.reason,
     };
-  
-    this.dashboardService.makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data).subscribe(
-      (response: any) => {
-        this.showLeaveRequestForm = false;
-        this.getLeaveDetails();
-      },
-      (error) => {
-        console.error('Error making leave request', error);
-      },
-    );
+
+    this.dashboardService
+      .makeLeaveRequest(this.authService.getUserData()?.userId ?? '', data)
+      .subscribe(
+        (response: any) => {
+          this.showLeaveRequestForm = false;
+          this.getLeaveDetails();
+        },
+        (error) => {
+          console.error('Error making leave request', error);
+        },
+      );
   }
 
   toggleLeaveRequestForm() {
@@ -98,15 +104,30 @@ export class AddRequestComponent implements OnInit {
 
   toggleMultipleDay() {
     this.multipleDays = !this.multipleDays;
-
+  
     const endDateControl = this.dateForm.get('endDate');
-
+  
+    if (!this.multipleDays) {
+      endDateControl?.setValue(''); 
+    }
+  
     if (this.multipleDays) {
       endDateControl?.setValidators([Validators.required]);
     } else {
       endDateControl?.clearValidators();
     }
-
+  
     endDateControl?.updateValueAndValidity();
+  }
+
+  calculateMinEndDate(): string {
+    const startDate = this.dateForm.get('startDate')?.value;
+    
+    const minEndDate = new Date(startDate);
+    minEndDate.setDate(minEndDate.getDate() + 1);
+  
+    const minEndDateString = minEndDate.toISOString().split('T')[0];
+  
+    return minEndDateString;
   }
 }
