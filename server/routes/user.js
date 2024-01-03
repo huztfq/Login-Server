@@ -1,5 +1,5 @@
 const express = require("express");
-const { handleUserSignup, handleUserLogin, handleUserResetPassword, handleUserForgotPassword, handleUserLogout, handleInfo, handleDeleteEmployees, handleFetchEmployeeDetails, handleUpdateEmployeeDetails} = require("../controllers/user");
+const { handleUserSignup, handleUserLogin, handleUserResetPassword, handleUserForgotPassword, handleUserLogout, handleInfo, handleDeleteEmployees, handleFetchEmployeeDetails, handleUpdateEmployeeDetails, handleDeleteEmployee} = require("../controllers/user");
 const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
