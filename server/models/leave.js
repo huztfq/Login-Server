@@ -33,6 +33,13 @@ const leaveSchema = new mongoose.Schema(
     approvedby: {
       type: String,
     },
+    workingDays: {
+      type: Number,
+    },
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
