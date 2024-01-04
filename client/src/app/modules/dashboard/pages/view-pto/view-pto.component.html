@@ -15,17 +15,37 @@
   
         <div>
           <label class="block text-gray-700 text-sm font-bold mb-2">Paid Time Off Remaining</label>
-          <div class="text-lg">{{ employeeData.paidOff }} hours</div>
-        </div>
-  
-        <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2">Designation</label>
-          <div class="text-lg">{{ employeeData.designation }}</div>
+          <div class="text-lg">{{ employeeData.daysPto }} Days</div>
         </div>
   
         <div>
           <label class="block text-gray-700 text-sm font-bold mb-2">Joining Date</label>
           <div class="text-lg">{{ employeeData.joiningDate | date }}</div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Probation End Date</label>
+          <div class="text-lg">{{ employeeData.probationEndDate | date }}</div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Designation</label>
+          <div class="text-lg">{{ employeeData.designation }}</div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Days Absent</label>
+          <div class="text-lg">{{ employeeData.daysAbsent }} Days</div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Sick Leaves</label>
+          <div class="text-lg">{{ employeeData.daysSick }} / 6 Days</div>  
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Casual Leaves</label>
+          <div class="text-lg">{{ employeeData.daysCasual }} / 6 Days</div>
         </div>
   
       </div>

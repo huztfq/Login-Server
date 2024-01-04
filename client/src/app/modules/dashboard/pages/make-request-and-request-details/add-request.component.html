@@ -21,18 +21,24 @@
     </div>
     <div class="mb-2 flex items-center">
       <span class="mr-2 text-sm font-bold text-gray-700">Leave Type:</span>
-      <span>{{ request.leaveType }}</span>
+      <span>{{ request.status }}</span>
     </div>
     <div class="mb-2 flex items-center">
       <span class="mr-2 text-sm font-bold text-gray-700">Status:</span>
-      <span>{{ request.status }}</span>
+      <span>{{ request.state }}</span>
     </div>
   </div>
 </div>
 
     <!-- Button to show/hide form -->
     <div class="mt-4 flex justify-end">
-      <button class="rounded bg-primary-500 py-2 px-4 text-white" (click)="makeLeaveRequest()">Make Request</button>
+      <button
+        [disabled]="isRequestInProgress"
+        class="rounded bg-primary-500 py-2 px-4 text-white"
+        (click)="makeLeaveRequest()"
+      >
+        {{ isRequestInProgress ? 'Request In Progress, Please Wait...' : 'Make Request' }}
+      </button>
     </div>
 
     <form *ngIf="showLeaveRequestForm" [formGroup]="dateForm" class="mt-4" (ngSubmit)="submitLeaveRequest()">
@@ -77,8 +83,8 @@
       </div>
 
       <div class="mb-4 block text-sm font-bold text-gray-700">
-        <label for="leaveType">Leave Type:</label>
-        <select id="leaveType" formControlName="selection" class="form-select">
+        <label for="state">Leave Type:</label>
+        <select id="state" formControlName="selection" class="form-select">
           <option value="casual">Casual</option>
           <option value="sick">Sick</option>
           <option value="pto">PTO</option>

@@ -17,6 +17,7 @@ export class AddRequestComponent implements OnInit {
   showLeaveRequestForm: boolean = false;
   dateForm!: FormGroup;
   multipleDays: boolean = false;
+  isRequestInProgress: boolean = false; // Added variable to track request in progress
 
   constructor(
     private route: ActivatedRoute,
@@ -43,10 +44,8 @@ export class AddRequestComponent implements OnInit {
   validateDate() {
     const startDate = this.dateForm.get('startDate')?.value;
     const endDate = this.dateForm.get('endDate')?.value;
-  
-    const today = new Date();
-    
-    if (endDate && new Date(endDate) <= today) {
+
+    if (endDate && new Date(endDate) <= new Date(startDate)) {
       this.dateForm.get('endDate')?.setErrors({ invalidDate: true });
     } else {
       this.dateForm.get('endDate')?.setErrors(null);
@@ -58,6 +57,7 @@ export class AddRequestComponent implements OnInit {
     this.dashboardService.getLeaveDetailsById(userId ?? '').subscribe(
       (response: any) => {
         this.leaveDetails = response;
+        this.checkRequestInProgress(); // Check if there is a pending request
       },
       (error) => {
         console.error('Error fetching leave details', error);
@@ -65,7 +65,19 @@ export class AddRequestComponent implements OnInit {
     );
   }
 
+  checkRequestInProgress() {
+    if (this.leaveDetails && this.leaveDetails.leaveRequests) {
+      this.isRequestInProgress = this.leaveDetails.leaveRequests.some(
+        (request: any) => request.state === 'pending'
+      );
+    }
+  }
+
   makeLeaveRequest() {
+    if (this.isRequestInProgress) {
+      alert('Request Already In Progress, Please Wait....'); // Show alert for pending request
+      return;
+    }
     this.showLeaveRequestForm = true;
   }
 
@@ -81,7 +93,7 @@ export class AddRequestComponent implements OnInit {
     const data: ISubmitRequest = {
       startDate: this.dateForm.value.startDate,
       endDate: this.dateForm.value.endDate,
-      leaveType: this.dateForm.value.selection,
+      status: this.dateForm.value.selection,
       message: this.dateForm.value.reason,
     };
 
@@ -104,30 +116,30 @@ export class AddRequestComponent implements OnInit {
 
   toggleMultipleDay() {
     this.multipleDays = !this.multipleDays;
-  
+
     const endDateControl = this.dateForm.get('endDate');
-  
+
     if (!this.multipleDays) {
-      endDateControl?.setValue(''); 
+      endDateControl?.setValue('');
     }
-  
+
     if (this.multipleDays) {
       endDateControl?.setValidators([Validators.required]);
     } else {
       endDateControl?.clearValidators();
     }
-  
+
     endDateControl?.updateValueAndValidity();
   }
 
   calculateMinEndDate(): string {
     const startDate = this.dateForm.get('startDate')?.value;
-    
+
     const minEndDate = new Date(startDate);
     minEndDate.setDate(minEndDate.getDate() + 1);
-  
+
     const minEndDateString = minEndDate.toISOString().split('T')[0];
-  
+
     return minEndDateString;
   }
 }

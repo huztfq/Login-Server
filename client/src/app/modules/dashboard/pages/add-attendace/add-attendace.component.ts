@@ -11,9 +11,7 @@ import { NgZone } from '@angular/core';
 })
 export class AddAttendanceComponent implements OnInit {
   selectedDate: string = new Date().toISOString().split('T')[0];
-  attendanceStatus: 'present' | 'absent' | 'halfday' | 'PTO'= 'present';
-  leaveType: 'casual' | 'sick' | null = null; 
-  workLocation: 'remote' | 'onsite' | null = null;
+  attendanceStatus: 'present' | 'absent' | 'halfday' | 'PTO' | 'casual' | 'sick'= 'present';
   selectedEmployeeId: string = '';
   employees: IUser[] = [];
 
@@ -43,7 +41,6 @@ export class AddAttendanceComponent implements OnInit {
 
   onStatusChange() {
     if (this.attendanceStatus === 'present') {
-      this.leaveType = 'casual';
     }
   }
 
@@ -60,8 +57,7 @@ export class AddAttendanceComponent implements OnInit {
       data = {
         userId: this.selectedEmployeeId,
         date: this.selectedDate,
-        leaveType: this.leaveType,
-        status: this.attendanceStatus as 'present' | 'absent' | 'halfday' | null,
+        status: this.attendanceStatus as 'present' | 'absent' | 'halfday' ,
       };
     }
   

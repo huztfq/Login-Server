@@ -31,7 +31,7 @@ export class GetRequestComponent implements OnInit {
     this.dashboardService.getLeaveRequestById().subscribe(
       (response: any) => {
         this.leaveRequests = response.filter(
-          (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'rejected'
+          (request: ILeaveRequest) => request.state !== 'approved' && request.state !== 'rejected'
         );
         this.menuService.leaveRequests.next(this.leaveRequests.length);
   

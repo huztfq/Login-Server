@@ -26,10 +26,16 @@
                       Absents
                   </th>
                   <th scope="col" class="px-6 py-3">
+                      Casual Leaves
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                      Sick Leaves
+                  </th>
+                  <th scope="col" class="px-6 py-3">
                       Half Days
                  </th>
                   <th scope="col" class="px-6 py-3">
-                      PTO Remaining
+                      PTO
                   </th>
                   <th scope="col" class="px-6 py-3">
                       <span class="sr-only">Edit</span>
@@ -58,11 +64,22 @@
                     {{ user.daysAbsent }}
                   </td>
                   <td class="px-6 py-4">
-                    {{ user.halfDays }}
-                  <td class="px-6 py-4">
-                    {{ user.paidOff }} days
+                    <span [ngClass]="{'text-red-500': user.daysCasual >= 6}">
+                      {{ user.daysCasual }} / 6 Days
+                    </span>
                   </td>
-
+                  <td class="px-6 py-4">
+                    <span [ngClass]="{'text-red-500': user.daysSick >= 6}">
+                      {{ user.daysSick }} / 6 Days
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    {{ user.daysHalfday }} Day
+                    <td class="px-6 py-4">
+                      <span [ngClass]="{'text-red-500': user.daysPto >= 15}">
+                        {{ user.daysPto }} / 15 Days
+                      </span>
+                    </td>
                   <td class="px-6 py-4 text-right">
                   </td>
               </tr>
