@@ -2,7 +2,7 @@
   <div class="mx-auto px-5">
     <div class="flex items-center justify-between py-3.5 md:justify-start">
       <!-- Mobile Navigation Menu Button-->
-      <div class="sm:order-1 md:hidden">
+      <div class="sm:order-1 lg:hidden">
         <button
           (click)="toggleMobileMenu()"
           type="button"
@@ -16,8 +16,8 @@
 
       <!-- Logo -->
       <div class="flex items-center justify-start sm:order-2 md:mr-10 lg:hidden">
-        <a class="flex items-center justify-center rounded bg-primary-500 p-2 focus:outline-none focus:ring-1">
-          <svg-icon src="assets/icons/logo.svg"> [svgClass]="'h-4 w-4'"> </svg-icon>
+        <a class="rounded bg-primary-500 p-2">
+          <svg-icon src="assets/icons/logo.svg" [svgClass]="'h-6 w-6'"> </svg-icon>
         </a>
         <b class="hidden pl-3 text-sm font-bold dark:text-night-50 sm:block"> Avrox PTO </b>
       </div>

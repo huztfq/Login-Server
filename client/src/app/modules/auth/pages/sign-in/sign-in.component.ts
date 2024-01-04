@@ -5,6 +5,7 @@ import { NgClass, NgIf } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ILogin, ILoginResponse } from '../../models/auth.interface';
 import { AuthService } from '../../services/auth.service';
+import { MenuService } from 'src/app/modules/layout/services/menu.service';
 
 @Component({
     selector: 'app-sign-in',
@@ -25,7 +26,7 @@ export class SignInComponent implements OnInit {
   submitted = false;
   passwordTextType!: boolean;
 
-  constructor(private readonly _formBuilder: FormBuilder, private readonly _router: Router, private authService: AuthService) {}
+  constructor(private readonly _formBuilder: FormBuilder, private readonly _router: Router, private authService: AuthService, private menuService: MenuService) {}
 
   ngOnInit(): void {
     this.form = this._formBuilder.group({
@@ -57,6 +58,7 @@ export class SignInComponent implements OnInit {
     this.authService.login(loginData).subscribe((res: ILoginResponse) => {
       this.authService.saveUserData(res);
       this._router.navigate(['/']);
+      this.menuService.getLeaveRequestsNumber();
     })
 
   }

@@ -14,13 +14,16 @@
 
         <!-- Parent Menu -->
         <ng-template #parentMenu let-sub="sub">
-          <a
-            [routerLink]="sub.route"
-            routerLinkActive="text-primary-500"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="inline-block w-full px-4 py-2 text-xs font-semibold">
-            {{ sub.label }}
-          </a>
+          <div class="flex space-between items-center">
+            <a
+              [routerLink]="sub.route"
+              routerLinkActive="text-primary-500"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="inline-block w-full px-4 py-2 text-xs font-semibold">
+              {{ sub.label }}
+            </a>
+            <p *ngIf="sub.badge && leaveRequestsCount" class="text-sm bg-primary-500 rounded-md px-2 text-white">{{leaveRequestsCount}}</p>
+          </div>
         </ng-template>
 
         <!-- Child Menu -->

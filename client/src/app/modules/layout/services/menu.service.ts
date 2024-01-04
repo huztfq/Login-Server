@@ -1,8 +1,10 @@
-import { Injectable, OnDestroy, signal } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef, Injectable, OnDestroy, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Menu } from 'src/app/core/constants/menu';
 import { MenuItem, SubMenuItem } from 'src/app/core/models/menu.model';
+import { DashboardService } from '../../dashboard/services/dashboard.service';
+import { ILeaveRequest } from '../../dashboard/models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +14,9 @@ export class MenuService implements OnDestroy {
   private _showMobileMenu = signal(false);
   private _pagesMenu = signal<MenuItem[]>([]);
   private _subscription = new Subscription();
+  public leaveRequests: Subject<number> = new Subject();
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private dashboardService: DashboardService, private ref: ApplicationRef) {
     /** Set dynamic menu */
     this._pagesMenu.set(Menu.pages);
 
@@ -36,6 +39,17 @@ export class MenuService implements OnDestroy {
       }
     });
     this._subscription.add(sub);
+    this.getLeaveRequestsNumber();
+  }
+
+  public getLeaveRequestsNumber() {
+    this.dashboardService.getLeaveRequestById().subscribe(
+      (response: any) => {
+        this.leaveRequests.next(response.filter(
+          (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'rejected'
+        ).length);
+      }
+    )
   }
 
   get showSideBar() {

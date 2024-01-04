@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MenuService } from 'src/app/modules/layout/services/menu.service';
 import { SubMenuItem } from 'src/app/core/models/menu.model';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterLinkActive, RouterLink } from '@angular/router';
-import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 
 @Component({
     selector: 'app-navbar-mobile-submenu',
@@ -13,6 +13,7 @@ import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
     imports: [
         NgClass,
         NgFor,
+        NgIf,
         NgTemplateOutlet,
         RouterLinkActive,
         RouterLink,
@@ -21,10 +22,15 @@ import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
 })
 export class NavbarMobileSubmenuComponent implements OnInit {
   @Input() public submenu = <SubMenuItem>{};
+  public leaveRequestsCount = 0;
 
-  constructor(private menuService: MenuService) {}
+  constructor(public menuService: MenuService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.menuService.leaveRequests.subscribe(res => {
+      this.leaveRequestsCount = res
+    });
+  }
 
   public toggleMenu(menu: any) {
     this.menuService.toggleSubMenu(menu);

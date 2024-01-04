@@ -15,7 +15,7 @@ export class Menu {
             { label: 'Add New Employee', route: '/dashboard/add-employee', access: 'admin' },
             { label: 'Attendance', route: '/dashboard/view-pto', access: 'employee' },
             { label: 'Request Leave', route: '/dashboard/request', access: 'employee' },
-            { label: 'Leave Requests', route: '/dashboard/view-requests', access: 'admin' },
+            { label: 'Leave Requests', route: '/dashboard/view-requests', access: 'admin', badge: true },
             { label: 'Leave Request History', route: '/dashboard/view-history', access: 'admin' },
             { label: 'Edit Employee', route: '/dashboard/edit-employee', access: 'admin' },
           ],
