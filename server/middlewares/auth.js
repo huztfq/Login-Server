@@ -1,5 +1,44 @@
+// auth.js/middlewares
 const jwt = require("jsonwebtoken");
-const { verifyToken, getUser } = require("../service/auth");
+const { verifyToken, getUser, setUser, userTokenMap } = require("../service/auth");
+
+function refreshTokenMiddleware(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (token) {
+    const decoded = verifyToken(token);
+
+    if (decoded) {
+      const user = getUser(token);
+
+      if (user) {
+        const expirationTime = userTokenMap.get(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const refreshThreshold = 300;
+
+        if (expirationTime - currentTime < refreshThreshold) {
+          console.log("Token needs refreshing");
+
+          const newToken = jwt.sign(
+            { user_id: user._id, email: user.email, role: user.role },
+            process.env.TOKEN_KEY,
+            {
+              expiresIn: "2h",
+            }
+          );
+
+          setUser(newToken, user);
+          const newExpirationTime = jwt.decode(newToken).exp;
+          setUser(newToken, user, newExpirationTime);
+          res.set('Authorization', `Bearer ${newToken}`);
+          console.log("Token refreshed");
+        }
+      }
+    }
+  }
+
+  next();
+}
 
 function authenticateToken(req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
@@ -8,22 +47,16 @@ function authenticateToken(req, res, next) {
     return res.status(401).json({ error: "Unauthorized - No token provided." });
   }
 
-  const decoded = verifyToken(token);
+  const expirationTime = userTokenMap.get(token);
 
-  if (!decoded) {
-    return res.status(401).json({ error: "Unauthorized - Invalid token." });
+  if (!expirationTime || expirationTime < Math.floor(Date.now() / 1000)) {
+    console.log("Token expired or invalid");
+    return res.status(401).json({ error: "Unauthorized - Token expired or invalid." });
   }
-
-  const user = getUser(token);
-
-  if (!user) {
-    return res.status(401).json({ error: "Unauthorized - User not found." });
-  }
-
-  req.user = user;
   next();
 }
 
 module.exports = {
+  refreshTokenMiddleware,
   authenticateToken,
 };

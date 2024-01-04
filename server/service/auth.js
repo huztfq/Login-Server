@@ -23,4 +23,5 @@ module.exports = {
   setUser,
   getUser,
   verifyToken,
+  userTokenMap, // Export the userTokenMap
 };
