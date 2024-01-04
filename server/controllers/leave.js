@@ -25,54 +25,10 @@ const createSickLeave = async (req, res) => {
       return res.status(400).json({ message: 'Pending leave request already exists for the user.' });
     }
 
-    let existingLeave;
-
     if (multipleDates) {
-      const dateRange = getDatesBetween(startDate, endDate);
-      existingLeave = await Leave.findOne({
-        user: userId,
-        startDate: { $in: dateRange },
-        state: 'pending',
-      });
-    } else {
-      existingLeave = await Leave.findOne({
-        user: userId,
-        startDate,
-        state: 'pending',
-      });
+      workingDays = calculateWorkingDays(new Date(startDate), new Date(endDate));
     }
-
-    if (existingLeave) {
-      existingLeave.startDate = startDate;
-      existingLeave.endDate = endDate;
-      existingLeave.status = status;
-      existingLeave.message = message;
-      existingLeave.workingDays = calculateWorkingDays(new Date(startDate), new Date(endDate));
-
-      const updatedLeave = await existingLeave.save();
-      console.log('Updated leave:', updatedLeave.status);
-
-      return res.status(200).json({
-        _id: updatedLeave._id,
-        user: updatedLeave.user,
-        startDate: updatedLeave.startDate,
-        endDate: updatedLeave.endDate,
-        status: updatedLeave.status,
-        message: updatedLeave.message,
-        workingDays: updatedLeave.workingDays,
-      });
-    }
-
-    let workingDays;
-
-    if (multipleDates) {
-      const parsedStartDate = new Date(startDate);
-      const parsedEndDate = new Date(endDate);
-      workingDays = calculateWorkingDays(parsedStartDate, parsedEndDate);
-    } else {
-      workingDays = 0;
-    }
-
+    
     const newLeave = new Leave({
       user: userId,
       startDate,
@@ -80,9 +36,10 @@ const createSickLeave = async (req, res) => {
       status,
       message,
       state: 'pending',
-      workingDays,
+      workingDays:  workingDays,
     });
-
+    
+    console.log('New leave:', multipleDates ? newLeave.workingDays : undefined);
     const savedLeave = await newLeave.save();
 
     res.status(201).json({
@@ -90,10 +47,10 @@ const createSickLeave = async (req, res) => {
       user: savedLeave.user,
       startDate: savedLeave.startDate,
       endDate: savedLeave.endDate,
-      leaveType: savedLeave.leaveType,
       status: savedLeave.status,
       message: savedLeave.message,
       workingDays: savedLeave.workingDays,
+      timestamp: savedLeave.timestamp,
     });
 
   } catch (error) {
@@ -102,7 +59,6 @@ const createSickLeave = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
-
 
 const calculateWorkingDays = (startDate, endDate) => {
   let workingDays = 0;
@@ -116,7 +72,20 @@ const calculateWorkingDays = (startDate, endDate) => {
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
+  console.log('workingDays:', workingDays);
   return workingDays;
+};
+
+const getDatesBetween = (startDate, endDate) => {
+  const dates = [];
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    dates.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return dates;
 };
 
 const getLeaveRequestsForAdmin = async (req, res) => {
@@ -137,6 +106,7 @@ const getLeaveRequestsForAdmin = async (req, res) => {
       message: leave.message,
       approvedby: leave.approvedby,
       workingDays: leave.workingDays,
+      timestamp: leave.timestamp,
     }));
 
     return res.status(200).json(responseLeaveRequests);
@@ -165,7 +135,8 @@ const getUserLeaveRequests = async (req, res) => {
       status: leave.status,
       message: leave.message,
       approvedby: leave.approvedby,
-      
+      timestamp: leave.timestamp,
+      workingDays: leave.workingDays,
     }));
 
     return res.status(200).json({ user: user.name, leaveRequests: formattedLeaveRequests });
@@ -261,18 +232,6 @@ const approveLeaveRequestByAdmin = async (req, res) => {
     console.error('Error in handleLeaveApproval:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
-};
-
-const getDatesBetween = (startDate, endDate) => {
-  const dates = [];
-  let currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    dates.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return dates;
 };
 
 module.exports = {
