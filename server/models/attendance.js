@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const attendanceSchema = new mongoose.Schema(
   {
     user: [{
@@ -8,25 +7,19 @@ const attendanceSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     }],
-    date: Date,
+    date: {
+      type: Date,
+    },
     status: {
       type: String,
-      enum: ['present', 'absent', 'halfday', 'pto'],
+      enum: ['present', 'absent', 'halfday', 'pto', 'casual', 'sick'],
       default: 'present',
-    },
-    leaveType: {
-      type: String,
-      enum: ['casual', 'sick'],
-      default: null,
-    },
-    workLocation: {
-      type: String,
-      enum: ['remote', 'onsite'],
-      default: null,
     },
   },
   { timestamps: true }
 );
+
+attendanceSchema.index({ user: 1, date: 1 }, { unique: true });
 
 const Attendance = mongoose.model("Attendance", attendanceSchema);
 

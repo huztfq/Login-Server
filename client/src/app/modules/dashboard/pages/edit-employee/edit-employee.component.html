@@ -30,7 +30,10 @@
   
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">Role</label>
-          <input class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="role" name="role" (input)="updateButtonStatus()" />
+          <select class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="role" name="role" (ngModelChange)="updateButtonStatus()">
+            <option value="employee">Employee</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
   
         <div class="mb-4">
@@ -44,7 +47,8 @@
           </div>
         </div>
   
-        <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" [class.bg-gray-300]="!isUpdateButtonEnabled" [class.bg-blue-500]="isUpdateButtonEnabled" (click)="updateEmployeeDetails()">Update Details</button>
+        <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" [disabled]="!isUpdateButtonEnabled" [class.bg-gray-300]="!isUpdateButtonEnabled" [class.bg-blue-500]="isUpdateButtonEnabled" (click)="updateEmployeeDetails()">Update Details</button>
+        <button type="button" class="bg-red-500 text-white py-2 px-4 rounded ml-2" (click)="deleteEmployee()">Delete Employee</button>
       </div>
     </div>
   </ng-container>

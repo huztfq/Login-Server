@@ -6,29 +6,29 @@
   <div class="m-4 mx-auto max-w-2xl rounded-md bg-white p-6 shadow-md">
     <h2 class="mb-4 text-2xl font-bold">Leave Details</h2>
 
-    <!-- Recent Leave Requests -->
-    <h3 class="mb-4 text-lg font-bold">Recent Leave Requests</h3>
-    <div class="max-h-96 overflow-y-auto">
-      <div *ngFor="let request of leaveDetails.leaveRequests" class="mb-4 border rounded-md p-4">
-        <!-- Box for each leave request -->
-        <div class="mb-2 flex items-center">
-          <span class="mr-2 text-sm font-bold text-gray-700">Request Date:</span>
-          <span>{{ request.leaveDate | date: 'yyyy-MM-dd' }}</span>
-        </div>
-        <div class="mb-2 flex items-center">
-          <span class="mr-2 text-sm font-bold text-gray-700">End Date:</span>
-          <span>{{ request.endDate | date: 'yyyy-MM-dd' }}</span>
-        </div>
-        <div class="mb-2 flex items-center">
-          <span class="mr-2 text-sm font-bold text-gray-700">Leave Type:</span>
-          <span>{{ request.leaveType }}</span>
-        </div>
-        <div class="mb-2 flex items-center">
-          <span class="mr-2 text-sm font-bold text-gray-700">Status:</span>
-          <span>{{ request.status }}</span>
-        </div>
-      </div>
+<!-- Recent Leave Requests -->
+<h3 class="mb-4 text-lg font-bold">Recent Leave Requests</h3>
+<div class="max-h-96 overflow-y-auto">
+  <div *ngFor="let request of leaveDetails.leaveRequests.reverse()" class="mb-4 border rounded-md p-4">
+    <!-- Box for each leave request -->
+    <div class="mb-2 flex items-center">
+      <span class="mr-2 text-sm font-bold text-gray-700">Request Date:</span>
+      <span>{{ request.leaveDate | date: 'yyyy-MM-dd' }}</span>
     </div>
+    <div class="mb-2 flex items-center">
+      <span class="mr-2 text-sm font-bold text-gray-700">End Date:</span>
+      <span>{{ request.endDate | date: 'yyyy-MM-dd' }}</span>
+    </div>
+    <div class="mb-2 flex items-center">
+      <span class="mr-2 text-sm font-bold text-gray-700">Leave Type:</span>
+      <span>{{ request.leaveType }}</span>
+    </div>
+    <div class="mb-2 flex items-center">
+      <span class="mr-2 text-sm font-bold text-gray-700">Status:</span>
+      <span>{{ request.status }}</span>
+    </div>
+  </div>
+</div>
 
     <!-- Button to show/hide form -->
     <div class="mt-4 flex justify-end">
@@ -43,21 +43,35 @@
         <span class="ms-3 ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Request for multiple dates</span>
       </label>
 
+
       <div class="mb-4 flex gap-4">
         <div class="flex-auto">
-          <label for="startDate" class="block text-sm font-bold text-gray-700">{{
-            !multipleDays ? 'Leave Date:' : 'Start Date:'
-          }}</label>
-          <input type="date" id="startDate" formControlName="startDate" class="form-input" />
+          <label for="startDate" class="block text-sm font-bold text-gray-700">
+            {{ !multipleDays ? 'Leave Date:' : 'Start Date:' }}
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            formControlName="startDate"
+            class="form-input"
+          />
         </div>
 
         <div class="flex-auto" *ngIf="multipleDays">
           <label for="endDate" class="block text-sm font-bold text-gray-700">End Date:</label>
-          <input type="date" id="endDate" formControlName="endDate" class="form-input" />
+          <input
+            type="date"
+            id="endDate"
+            formControlName="endDate"
+            class="form-input"
+            (blur)="validateDate()"
+            [min]="calculateMinEndDate()"
+          />
           <div
             class="text-xs text-red-500"
-            *ngIf="dateForm.get('endDate')!.hasError('invalidDate') && dateForm.get('endDate')!.touched">
-            End date must be greater than start date.
+            *ngIf="dateForm.get('endDate')!.hasError('invalidDate') && dateForm.get('endDate')!.touched"
+          >
+            End date must be a future date.
           </div>
         </div>
       </div>
@@ -83,9 +97,8 @@
         </button>
         <button
           type="submit"
-          [disabled]="dateForm.invalid"
-          class="rounded bg-primary-500 py-2 px-4 text-white"
-          (clock)="submitLeaveRequest()">
+          [disabled]="dateForm.invalid || !dateForm.get('startDate')?.value || !dateForm.get('selection')?.value"
+          class="rounded bg-primary-500 py-2 px-4 text-white">
           Submit
         </button>
       </div>

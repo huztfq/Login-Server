@@ -11,7 +11,7 @@ router.post("/reset", authMiddleware.authenticateToken, handleUserResetPassword)
 router.post("/forgot", authMiddleware.authenticateToken, handleUserForgotPassword);
 router.post("/logout", authMiddleware.authenticateToken, handleUserLogout);
 router.get("/info", handleInfo);
-router.post("/deleteEmployees/:userId", authMiddleware.authenticateToken, handleDeleteEmployees);
+router.post("/deleteEmployees/:userId",authMiddleware.authenticateToken, handleDeleteEmployees);
 router.get("/fetchEmployeeDetails/:userId", authMiddleware.authenticateToken, handleFetchEmployeeDetails);
 router.post("/updateEmployeeDetails/:userId", authMiddleware.authenticateToken, handleUpdateEmployeeDetails);
 router.post("/deleteEmployee/:userId", authMiddleware.authenticateToken, handleDeleteEmployee);

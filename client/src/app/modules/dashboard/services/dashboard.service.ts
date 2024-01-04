@@ -65,4 +65,9 @@ export class DashboardService {
   updateEmployeeDetailsById(userId: string, data: any) {
     return this.http.post(APIURL + `user/updateEmployeeDetails/${userId}`, data);
   }
+
+  deleteEmployeeById(userId: string) {
+    return this.http.post(APIURL + `user/deleteEmployee/${userId}`, {});
+  }
+
 }
