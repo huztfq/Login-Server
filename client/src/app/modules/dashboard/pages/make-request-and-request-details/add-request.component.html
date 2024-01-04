@@ -82,13 +82,13 @@
         </div>
       </div>
 
+
       <div class="mb-4 block text-sm font-bold text-gray-700">
         <label for="state">Leave Type:</label>
         <select id="state" formControlName="selection" class="form-select">
-          <option value="casual">Casual</option>
           <option value="sick">Sick</option>
-          <option value="pto">PTO</option>
           <option value="halfday">Half Day</option>
+          <option value="pto" [disabled]="!isPTOAllowed()">PTO NOT ALLOWED</option>
         </select>
       </div>
 

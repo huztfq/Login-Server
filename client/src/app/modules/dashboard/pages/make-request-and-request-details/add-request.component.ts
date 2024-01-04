@@ -1,10 +1,10 @@
-// Import necessary modules
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ISubmitRequest } from '../../models/user.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-add-request',
@@ -17,20 +17,22 @@ export class AddRequestComponent implements OnInit {
   showLeaveRequestForm: boolean = false;
   dateForm!: FormGroup;
   multipleDays: boolean = false;
-  isRequestInProgress: boolean = false; // Added variable to track request in progress
+  isRequestInProgress: boolean = false;
+  employeeData: any;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardService,
     private authService: AuthService,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.userId = params.get('userId') || '';
       this.getLeaveDetails();
+      this.getEmployeeData();
     });
 
     this.dateForm = this.fb.group({
@@ -57,11 +59,23 @@ export class AddRequestComponent implements OnInit {
     this.dashboardService.getLeaveDetailsById(userId ?? '').subscribe(
       (response: any) => {
         this.leaveDetails = response;
-        this.checkRequestInProgress(); // Check if there is a pending request
+        this.checkRequestInProgress();
       },
       (error) => {
         console.error('Error fetching leave details', error);
+      }
+    );
+  }
+
+  getEmployeeData() {
+    const userId = this.authService.getUserData()?.userId;
+    this.dashboardService.getSingleEmployee(userId ?? '').subscribe(
+      (response: any) => {
+        this.employeeData = response.data;
       },
+      (error) => {
+        console.error('Error fetching employee data', error);
+      }
     );
   }
 
@@ -75,7 +89,7 @@ export class AddRequestComponent implements OnInit {
 
   makeLeaveRequest() {
     if (this.isRequestInProgress) {
-      alert('Request Already In Progress, Please Wait....'); // Show alert for pending request
+      alert('Request Already In Progress, Please Wait....');
       return;
     }
     this.showLeaveRequestForm = true;
@@ -106,7 +120,7 @@ export class AddRequestComponent implements OnInit {
         },
         (error) => {
           console.error('Error making leave request', error);
-        },
+        }
       );
   }
 
@@ -141,5 +155,11 @@ export class AddRequestComponent implements OnInit {
     const minEndDateString = minEndDate.toISOString().split('T')[0];
 
     return minEndDateString;
+  }
+
+  isPTOAllowed(): boolean {
+    const probationEndDate = new Date(this.employeeData.probationEndDate);
+    const currentDate = new Date();
+    return currentDate >= probationEndDate;
   }
 }

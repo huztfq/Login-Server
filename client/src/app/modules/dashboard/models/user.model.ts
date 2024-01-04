@@ -67,6 +67,7 @@ status: 'casual' | 'sick' | 'halfday' | 'PTO' | 'absent' | null;
 message: string;
 approvedby: string;
 workingDays: number;
+timestamp: string;
 }
 
 export interface ILeaveRequestResponse {

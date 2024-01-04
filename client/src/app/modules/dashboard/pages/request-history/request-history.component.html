@@ -6,19 +6,23 @@
     <table class="w-full table-fixed">
         <thead>
             <tr class="border-b-2">
-                <th class="w-1/6 py-3 text-left">Name</th>
-                <th class="w-1/6 py-3 text-left">Requested Date</th>
-                <th class="w-1/6 py-3 text-left">Leave Type</th>
-                <th class="w-1/6 py-3 text-left">Approved By</th>
-                <th class="w-1/6 py-3 text-left">Status</th>
+                <th class="w-1/7 py-3 text-left">Name</th>
+                <th class="w-1/7 py-3 text-left">Requested</th>
+                <th class="w-1/7 py-3 text-left">Start Date</th>
+                <th class="w-1/7 py-3 text-left">End Date</th>
+                <th class="w-1/7 py-3 text-left">Leave Type</th>
+                <th class="w-1/7 py-3 text-left">Approved By</th>
+                <th class="w-1/7 py-3 text-left">Status</th>
             </tr>
         </thead>
         <tbody>
             <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
                 <tr *ngFor="let request of leaveRequests" class="border-b">
                     <td class="py-2">{{ request.user.name }}</td>
-                    <td class="py-2">{{ request.startDate | date:'yyyy-MM-dd' }}</td>
-                    <td class="py-2">{{ request.state }}</td>
+                    <td class="py-2">{{ request.timestamp | date:'dd MMM yy' }}</td>
+                    <td class="py-2">{{ request.startDate | date:'dd MMM yy' }}</td>
+                    <td class="py-2">{{ request.endDate | date:'dd MMM yy' }}</td>
+                    <td class="py-2">{{ request.status }}</td>
                     <td class="py-2">{{ request.approvedby }}</td>
                     <td class="py-2">
                         <span *ngIf="request.state === 'approved'" class="text-white">
@@ -32,7 +36,7 @@
             </ng-container>
             <ng-template #noData>
                 <tr>
-                    <td class="py-2 text-center" colspan="4">-- No data available --</td>
+                    <td class="py-2 text-center" colspan="7">-- No data available --</td>
                 </tr>
             </ng-template>
         </tbody>

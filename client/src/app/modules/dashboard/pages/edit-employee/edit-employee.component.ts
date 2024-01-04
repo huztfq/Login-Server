@@ -121,7 +121,6 @@ updateEmployeeDetails() {
     if (this.selectedEmployeeId) {
       this.dashboardService.deleteEmployeeById(this.selectedEmployeeId).subscribe(
         (response: any) => {
-          // Optionally handle success response
           console.log('Employee deleted successfully.');
           this.router.navigate(['dashboard/home']);
         },
