@@ -13,7 +13,6 @@ const createAttendance = async (req, res) => {
 
     const inputDate = new Date(date);
 
-    // Ensure the date is in the correct format
     const formattedDate = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
     const dayOfWeek = formattedDate.getDay();
 
@@ -21,17 +20,14 @@ const createAttendance = async (req, res) => {
       return res.status(400).json({ error: "Attendance cannot be recorded on weekends" });
     }
 
-    // Check if attendance entry already exists for the given user and date
     const existingAttendance = await Attendance.findOne({ user: userId, date: formattedDate });
 
     if (existingAttendance) {
-      // If entry exists, update the status
       existingAttendance.status = status;
       await existingAttendance.save();
 
       return res.status(200).json({ message: "Attendance record overwritten successfully", attendance: existingAttendance });
     } else {
-      // If entry doesn't exist, create a new attendance record
       const attendance = new Attendance({
         user: userId,
         date: formattedDate,
@@ -94,13 +90,15 @@ const calculateAttendance = async (user) => {
     const fromDate = user.joiningDate;
     const toDate = new Date();
 
-    // Fetching additional user information
-    const formattedProbationEndDate = user.probationEndDate ? new Date(user.probationEndDate) : null;
+    const joiningDate = new Date(user.joiningDate);
 
-    // Fetching attendance records for the user within the date range
+    const probationEndDate = new Date(joiningDate);
+    probationEndDate.setMonth(joiningDate.getMonth() + 3);
+    
+    const formattedProbationEndDate = user.probationEndDate ? new Date(user.probationEndDate) : probationEndDate;
+
     const attendanceRecords = await Attendance.find({ user: userId, date: { $gte: fromDate, $lte: toDate } });
 
-    // Create an array of all dates between joiningDate and toDate
     const allDates = [];
     let currentDate = new Date(fromDate);
 
@@ -109,12 +107,10 @@ const calculateAttendance = async (user) => {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    // Check if each date has an attendance record, if not, add a default record
     allDates.forEach((date) => {
       const existingRecord = attendanceRecords.find((record) => record.date.toDateString() === date.toDateString());
 
       if (!existingRecord) {
-        // Check if a default record already exists for the current date
         const defaultRecordExists = attendanceRecords.some(
           (record) => record.date.toDateString() === date.toDateString() && record.status === 'absent'
         );
@@ -123,7 +119,7 @@ const calculateAttendance = async (user) => {
           attendanceRecords.push({
             user: userId,
             date: date,
-            status: 'present', // Default status for missing dates
+            status: 'present', 
           });
         }
       }
@@ -139,7 +135,6 @@ const calculateAttendance = async (user) => {
     attendanceRecords.forEach((record) => {
       const dayOfWeek = record.date.getDay();
 
-      // Ignore weekends (Saturday - day 6, Sunday - day 0)
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         switch (record.status) {
           case 'present':
@@ -184,9 +179,6 @@ const calculateAttendance = async (user) => {
   }
 };
 
-
-
-
 function getMonthName(month) {
   const monthNames = [
     'January',
@@ -224,7 +216,6 @@ function getWorkingDaysArray(startDate, endDate) {
 
 const deleteAllAttendanceEntries = async () => {
   try {
-    // Assuming Attendance is your Mongoose model
     const result = await Attendance.deleteMany({});
     console.log(`Deleted ${result.deletedCount} attendance entries.`);
   } catch (error) {
