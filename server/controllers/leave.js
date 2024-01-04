@@ -16,7 +16,6 @@ const createSickLeave = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if there is an existing leave entry with state 'pending'
     const existingPendingLeave = await Leave.findOne({
       user: userId,
       state: 'pending',
@@ -29,7 +28,6 @@ const createSickLeave = async (req, res) => {
     let existingLeave;
 
     if (multipleDates) {
-      // Check if there is an existing leave entry for each date in the range
       const dateRange = getDatesBetween(startDate, endDate);
       existingLeave = await Leave.findOne({
         user: userId,
@@ -37,7 +35,6 @@ const createSickLeave = async (req, res) => {
         state: 'pending',
       });
     } else {
-      // Check if there is an existing leave entry for the given date
       existingLeave = await Leave.findOne({
         user: userId,
         startDate,
@@ -46,7 +43,6 @@ const createSickLeave = async (req, res) => {
     }
 
     if (existingLeave) {
-      // Rewrite the existing entry if it exists
       existingLeave.startDate = startDate;
       existingLeave.endDate = endDate;
       existingLeave.status = status;
@@ -54,6 +50,7 @@ const createSickLeave = async (req, res) => {
       existingLeave.workingDays = calculateWorkingDays(new Date(startDate), new Date(endDate));
 
       const updatedLeave = await existingLeave.save();
+      console.log('Updated leave:', updatedLeave.status);
 
       return res.status(200).json({
         _id: updatedLeave._id,
@@ -66,7 +63,6 @@ const createSickLeave = async (req, res) => {
       });
     }
 
-    // If no existing entry, create a new one
     let workingDays;
 
     if (multipleDates) {
@@ -243,15 +239,15 @@ const approveLeaveRequestByAdmin = async (req, res) => {
 
       await Leave.updateOne(
         { _id: leaveID },
-        { $set: { state: state, approvedby: name } }, // Fix: Change 'State' to 'state'
+        { $set: { state: state, approvedby: name } }, 
       );
 
       return res.status(200).json({ message: 'Leave request approved successfully' });
 
-    } else if (state.toLowerCase() === 'declined') {
+    } else if (state.toLowerCase() === 'rejected') {
       await Leave.updateOne(
         { _id: leaveID },
-        { $set: { state: state, approvedby: name } }, // Fix: Change 'State' to 'state'
+        { $set: { state: state, approvedby: name } }, 
       );
 
       return res.status(200).json({ message: 'Leave request declined successfully' });
@@ -266,8 +262,6 @@ const approveLeaveRequestByAdmin = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-
 
 const getDatesBetween = (startDate, endDate) => {
   const dates = [];
