@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ILogin, ILoginResponse } from '../models/auth.interface';
-import { APIURL } from 'src/app/core/constants/api';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -12,7 +11,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   public login(data: ILogin): Observable<ILoginResponse> {
-    return this.http.post<ILoginResponse>(APIURL + 'user/login', data);
+    return this.http.post<ILoginResponse>(process.env['API_URL'] + 'user/login', data);
   }
 
   public saveUserData(userData: ILoginResponse): void {
