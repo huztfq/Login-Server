@@ -18,22 +18,21 @@ function refreshTokenMiddleware(req, res, next) {
 
         if (expirationTime - currentTimeUTC < refreshThreshold) {
           console.log("Token needs refreshing");
-       
+
           const newToken = jwt.sign(
-             { user_id: user._id, email: user.email, role: user.role },
-             process.env.TOKEN_KEY,
-             { expiresIn: "2h" }
+            { user_id: user._id, email: user.email, role: user.role },
+            process.env.TOKEN_KEY,
+            {
+              expiresIn: "2h",
+            }
           );
-       
-          userTokenMap.delete(token);
+
           setUser(newToken, user);
           const newExpirationTime = jwt.decode(newToken).exp;
           setUser(newToken, user, newExpirationTime);
-          
           res.set('Authorization', `Bearer ${newToken}`);
           console.log("Token refreshed");
-       }
-       
+        }
       }
     }
   }
@@ -50,10 +49,10 @@ function authenticateToken(req, res, next) {
 
   const expirationTime = userTokenMap.get(token);
 
-  if (!expirationTime || expirationTime < currentTimeUTC) {
-    userTokenMap.delete(token);  // Clear the expired token
+  if (!expirationTime || expirationTime < Math.floor(Date.now() / 1000)) {
+    console.log("Token expired or invalid");
     return res.status(401).json({ error: "Unauthorized - Token expired or invalid." });
- }
+  }
   next();
 }
 
