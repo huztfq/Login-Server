@@ -1,10 +1,10 @@
-// Import necessary modules
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ISubmitRequest } from '../../models/user.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-add-request',
@@ -17,19 +17,22 @@ export class AddRequestComponent implements OnInit {
   showLeaveRequestForm: boolean = false;
   dateForm!: FormGroup;
   multipleDays: boolean = false;
+  isRequestInProgress: boolean = false;
+  employeeData: any;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardService,
     private authService: AuthService,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.userId = params.get('userId') || '';
       this.getLeaveDetails();
+      this.getEmployeeData();
     });
 
     this.dateForm = this.fb.group({
@@ -43,10 +46,8 @@ export class AddRequestComponent implements OnInit {
   validateDate() {
     const startDate = this.dateForm.get('startDate')?.value;
     const endDate = this.dateForm.get('endDate')?.value;
-  
-    const today = new Date();
-    
-    if (endDate && new Date(endDate) <= today) {
+
+    if (endDate && new Date(endDate) <= new Date(startDate)) {
       this.dateForm.get('endDate')?.setErrors({ invalidDate: true });
     } else {
       this.dateForm.get('endDate')?.setErrors(null);
@@ -58,14 +59,39 @@ export class AddRequestComponent implements OnInit {
     this.dashboardService.getLeaveDetailsById(userId ?? '').subscribe(
       (response: any) => {
         this.leaveDetails = response;
+        this.checkRequestInProgress();
       },
       (error) => {
         console.error('Error fetching leave details', error);
-      },
+      }
     );
   }
 
+  getEmployeeData() {
+    const userId = this.authService.getUserData()?.userId;
+    this.dashboardService.getSingleEmployee(userId ?? '').subscribe(
+      (response: any) => {
+        this.employeeData = response.data;
+      },
+      (error) => {
+        console.error('Error fetching employee data', error);
+      }
+    );
+  }
+
+  checkRequestInProgress() {
+    if (this.leaveDetails && this.leaveDetails.leaveRequests) {
+      this.isRequestInProgress = this.leaveDetails.leaveRequests.some(
+        (request: any) => request.state === 'pending'
+      );
+    }
+  }
+
   makeLeaveRequest() {
+    if (this.isRequestInProgress) {
+      alert('Request Already In Progress, Please Wait....');
+      return;
+    }
     this.showLeaveRequestForm = true;
   }
 
@@ -81,7 +107,7 @@ export class AddRequestComponent implements OnInit {
     const data: ISubmitRequest = {
       startDate: this.dateForm.value.startDate,
       endDate: this.dateForm.value.endDate,
-      leaveType: this.dateForm.value.selection,
+      status: this.dateForm.value.selection,
       message: this.dateForm.value.reason,
     };
 
@@ -94,7 +120,7 @@ export class AddRequestComponent implements OnInit {
         },
         (error) => {
           console.error('Error making leave request', error);
-        },
+        }
       );
   }
 
@@ -104,30 +130,36 @@ export class AddRequestComponent implements OnInit {
 
   toggleMultipleDay() {
     this.multipleDays = !this.multipleDays;
-  
+
     const endDateControl = this.dateForm.get('endDate');
-  
+
     if (!this.multipleDays) {
-      endDateControl?.setValue(''); 
+      endDateControl?.setValue('');
     }
-  
+
     if (this.multipleDays) {
       endDateControl?.setValidators([Validators.required]);
     } else {
       endDateControl?.clearValidators();
     }
-  
+
     endDateControl?.updateValueAndValidity();
   }
 
   calculateMinEndDate(): string {
     const startDate = this.dateForm.get('startDate')?.value;
-    
+
     const minEndDate = new Date(startDate);
     minEndDate.setDate(minEndDate.getDate() + 1);
-  
+
     const minEndDateString = minEndDate.toISOString().split('T')[0];
-  
+
     return minEndDateString;
+  }
+
+  isPTOAllowed(): boolean {
+    const probationEndDate = new Date(this.employeeData.probationEndDate);
+    const currentDate = new Date();
+    return currentDate >= probationEndDate;
   }
 }

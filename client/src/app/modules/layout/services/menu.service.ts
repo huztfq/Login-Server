@@ -46,7 +46,7 @@ export class MenuService implements OnDestroy {
     this.dashboardService.getLeaveRequestById().subscribe(
       (response: any) => {
         this.leaveRequests.next(response.filter(
-          (request: ILeaveRequest) => request.status !== 'approved' && request.status !== 'rejected'
+          (request: ILeaveRequest) => request.state !== 'approved' && request.state !== 'rejected'
         ).length);
       }
     )

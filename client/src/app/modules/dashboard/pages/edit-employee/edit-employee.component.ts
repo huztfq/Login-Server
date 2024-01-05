@@ -46,8 +46,6 @@ export class EditEmployeeComponent implements OnInit {
     );
   }
 
-
-
   onEmployeeSelected() {
     if (this.selectedEmployeeId) {
       this.dashboardService.getEmployeeDetailsById(this.selectedEmployeeId).subscribe(
@@ -123,8 +121,8 @@ updateEmployeeDetails() {
     if (this.selectedEmployeeId) {
       this.dashboardService.deleteEmployeeById(this.selectedEmployeeId).subscribe(
         (response: any) => {
-          // Optionally handle success response
           console.log('Employee deleted successfully.');
+          this.router.navigate(['dashboard/home']);
         },
         (error) => {
           console.error('Error deleting employee:', error);

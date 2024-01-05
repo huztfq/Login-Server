@@ -1,36 +1,40 @@
 <!-- get-request.component.html -->
 
-<div class="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-md shadow-md m-4 mb-6">
   <h2 class="text-3xl font-bold mb-6 text-center">Leave Requests</h2>
 
   <table class="w-full table-fixed">
     <thead>
       <tr class="border-b-2">
-        <th class="w-1/6 py-3">Name</th>
-        <th class="w-1/6 py-3">Requested Date</th>
-        <th class="w-1/6 py-3">End Date</th>
-        <th class="w-1/6 py-3">Leave Type</th>
-        <th class="w-1/6 py-3">Mesage</th>
-        <th class="w-1/6 py-3">Action</th>
+        <th class="w-1/7 py-3 mr-1.5">Name</th>
+        <th class="w-1/7 py-3 mr-1.5">Requested Date</th>
+        <th class="w-1/7 py-3 mr-1.5">Start Date</th>
+        <th class="w-1/7 py-3 mr-1.5">End Date</th>
+        <th class="w-1/7 py-3 mr-1.5">Working Days</th>
+        <th class="w-1/7 py-3 mr-1.5">Leave Type</th>
+        <th class="w-1/7 py-3 mr-1.5">Message</th>
+        <th class="w-1/7 py-3 mr-1.5">Action</th>
       </tr>
     </thead>
     <tbody>
       <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
         <tr *ngFor="let request of leaveRequests" class="border-b">
-          <td class="py-2">{{ request.user.name }}</td>
-          <td class="py-2">{{ request.startDate | date:'yyyy-MM-dd' }}</td>
-          <td class="py-2">{{ request.endDate | date:'yyyy-MM-dd' }}</td>
-          <td class="py-2">{{ request.leaveType }}</td>
+          <td class="py-2 mr-1.5">{{ request.user.name }}</td>
+          <td class="py-2">{{ request.timestamp | date:'dd MMM yy' }}</td>
+          <td class="py-2">{{ request.startDate | date:'dd MMM yy' }}</td>
+          <td class="py-2">{{ request.endDate | date:'dd MMM yy' }}</td>
+          <td class="py-2"> {{request.workingDays}}</td>
+          <td class="py-2">{{ request.status }}</td>
           <td class="py-2">{{ request.message }}</td>
-          <td class="py-2 flex space-x-2">
-            <button class="btn-action btn-approve flex-1 bg-green-500 text-white rounded" (click)="approveLeave(request._id)"><span class="text-sm">Approve</span></button>
-            <button class="btn-action btn-decline flex-1 bg-red-500 text-white rounded" (click)="declineLeave(request._id)"><span class="text-sm">Reject</span></button>
+          <td class="py-2 mr-1.5 flex space-x-3">
+            <button class="btn-action btn-approve bg-green-500 text-white rounded" (click)="approveLeave(request._id)"><span class="text-sm">Approve</span></button>
+            <button class="btn-action btn-decline bg-red-500 text-white rounded" (click)="declineLeave(request._id)"><span class="text-sm">Reject</span></button>
           </td>
         </tr>
       </ng-container>
       <ng-template #noData>
         <tr>
-          <td class="py-2" colspan="5">-- No data available --</td>
+          <td class="py-2 mr-1.5" colspan="7">-- No data available --</td>
         </tr>
       </ng-template>
     </tbody>

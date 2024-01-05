@@ -25,7 +25,7 @@ export class GetRequestHistoryComponent implements OnInit {
     this.dashboardService.getLeaveRequestById().subscribe(
       (response: any) => {
         this.leaveRequests = response.filter(
-          (request: ILeaveRequest) => request.status !== 'pending'
+          (request: ILeaveRequest) => request.state !== 'pending'
         );
       },
       (error) => {

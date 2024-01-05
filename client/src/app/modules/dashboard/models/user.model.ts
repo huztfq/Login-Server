@@ -5,9 +5,11 @@ export interface IUser {
   designation: string;
   daysPresent: number;
   daysAbsent: number;
-  halfDays: number;
-  paidOff: number;
+  daysHalfday: number;
+  daysPto: number;
   probationEndDate: Date;
+  daysSick: number;
+  daysCasual: number;
 }
 
 export interface IUsersResponse {
@@ -38,7 +40,7 @@ export interface ISubmitAttendance {
 export interface ISubmitRequest{
   startDate: string;
   endDate: string;
-  leaveType?: 'casual' | 'sick' | "halfday" | "PTO" | null;
+  status?: 'casual' | 'sick' | "halfday" | "PTO" | null;
   message?: string;
 }
 
@@ -58,13 +60,14 @@ user: {
   name: string;
   designation: string;
 };
-status: 'pending' | 'approved' | 'rejected';
+state: 'pending' | 'approved' | 'rejected';
 startDate: string;
 endDate: string;
-leaveType: 'casual' | 'sick' | null;
+status: 'casual' | 'sick' | 'halfday' | 'PTO' | 'absent' | null;
 message: string;
 approvedby: string;
 workingDays: number;
+timestamp: string;
 }
 
 export interface ILeaveRequestResponse {

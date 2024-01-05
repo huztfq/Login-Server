@@ -62,6 +62,10 @@ async function handleUserLogin(req, res) {
     );
 
     setUser(token, user);
+    
+    const decoded = jwt.decode(token);
+    setUser(token, user, decoded.exp);
+
     const resObject = {
       userId: user._id,
       token,
@@ -75,6 +79,7 @@ async function handleUserLogin(req, res) {
     return res.status(500).json({ error: "Internal server error. Please try again later." });
   }
 }
+
 
 async function handleUserResetPassword(req, res) {
   try {
