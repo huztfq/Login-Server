@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ICreateUser, ILeaveRequest, ISubmitAttendance, IUserResponse, IUsersResponse } from '../models/user.model';
+import { environment } from '../../../../environments/environment';
 
-const APIURL = process.env['API_URL'];
+const APIURL = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root'

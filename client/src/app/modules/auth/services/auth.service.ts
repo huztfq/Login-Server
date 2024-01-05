@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ILogin, ILoginResponse } from '../models/auth.interface';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   public login(data: ILogin): Observable<ILoginResponse> {
-    return this.http.post<ILoginResponse>(process.env['API_URL'] + 'user/login', data);
+    return this.http.post<ILoginResponse>(environment.apiUrl + 'user/login', data);
   }
 
   public saveUserData(userData: ILoginResponse): void {
