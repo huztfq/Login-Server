@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://avrox-pto-production-backend.vercel.app/'
+  apiUrl: 'http://localhost:8001/'
 };
