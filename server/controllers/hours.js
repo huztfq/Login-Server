@@ -75,7 +75,7 @@ const fetchAllUsersAttendance = async (req, res) => {
       return newUser;
     });
 
-    const userArray = (await Promise.all(userPromises)).filter(user => user.role !== "admin");
+    const userArray = (await Promise.all(userPromises));
     res.status(200).json({ success: true, data: userArray });
   } catch (error) {
     console.error(error);
@@ -165,6 +165,7 @@ const calculateAttendance = async (user) => {
       designation: user.designation,
       joiningDate: user.joiningDate,
       probationEndDate: formattedProbationEndDate,
+      role: user.role,
       userId,
       daysPresent,
       daysAbsent,
