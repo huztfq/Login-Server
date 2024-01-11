@@ -190,7 +190,7 @@ async function handleFetchEmployeeDetails(req, res) {
   try {
     const { userId } = req.params;
 
-    const employeeDetails = await User.findById(userId, 'name email designation joiningDate password role');
+    const employeeDetails = await User.findById(userId, 'name email designation joiningDate role');
     if (!employeeDetails) {
       return res.status(404).json({ error: "Employee not found." });
     }
