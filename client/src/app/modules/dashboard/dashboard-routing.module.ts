@@ -9,6 +9,7 @@ import { AddRequestComponent } from './pages/make-request-and-request-details/ad
 import { GetRequestComponent } from './pages/get-Request-and-approve/get-request.component';
 import { GetRequestHistoryComponent } from './pages/request-history/request-history.component';
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
+import { ChangeCredentialsComponent } from './pages/change-credentials/change-credentials.component';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
@@ -25,6 +26,7 @@ const routes: Routes = [
       { path: 'request', component: AddRequestComponent, canActivate: [AuthGuard], data: { roles: ['employee'] }},
       { path: 'view-history', component: GetRequestHistoryComponent, canActivate: [AuthGuard], data: { roles: ['admin'] }},
       { path: 'edit-employee', component: EditEmployeeComponent, canActivate: [AuthGuard], data: { roles: ['admin'] }},
+      { path: 'edit-profile', component: ChangeCredentialsComponent, canActivate: [AuthGuard], data: { roles: ['admin', 'employee'] }},
       { path: '**', redirectTo: 'error/404' },
     ],
   },

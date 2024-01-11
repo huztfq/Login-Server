@@ -37,7 +37,7 @@ export class EditEmployeeComponent implements OnInit {
     this.dashboardService.getAllEmployees().subscribe(
       (res: IUsersResponse) => {
         this.zone.run(() => {
-          this.employees = res.data;
+          this.employees = res.data.filter(employee => employee.role === 'employee');
         });
       },
       (error) => {

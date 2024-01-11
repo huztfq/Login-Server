@@ -18,6 +18,8 @@ export class Menu {
             { label: 'Leave Requests', route: '/dashboard/view-requests', access: 'admin', badge: true },
             { label: 'Leave Request History', route: '/dashboard/view-history', access: 'admin' },
             { label: 'Edit Employee', route: '/dashboard/edit-employee', access: 'admin' },
+            { label: 'Change Credentials', route: '/dashboard/edit-profile', access: 'employee' },
+            { label: 'Change Credentials', route: '/dashboard/edit-profile', access: 'admin' },
           ],
         }
       ],
