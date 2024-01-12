@@ -19,6 +19,7 @@ import { GetRequestComponent } from './pages/get-Request-and-approve/get-request
 import { HomeComponent } from './pages/home/home.component';
 import { GetRequestHistoryComponent } from './pages/request-history/request-history.component';
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
+import { ChangeCredentialsComponent } from './pages/change-credentials/change-credentials.component';
 @NgModule({
   imports: [
     DashboardRoutingModule,
@@ -39,6 +40,7 @@ import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.compo
     GetRequestComponent,
     GetRequestHistoryComponent,
     EditEmployeeComponent,
+    ChangeCredentialsComponent,
   ],
   providers: [
     AuthService,

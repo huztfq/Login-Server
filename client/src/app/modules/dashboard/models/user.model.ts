@@ -10,6 +10,7 @@ export interface IUser {
   probationEndDate: Date;
   daysSick: number;
   daysCasual: number;
+  role: string;
 }
 
 export interface IUsersResponse {

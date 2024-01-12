@@ -36,17 +36,6 @@
           </select>
         </div>
   
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-          <div class="relative">
-            <input *ngIf="!isPasswordVisible" type="password" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="password" name="password" (input)="updateButtonStatus()" />
-            <input *ngIf="isPasswordVisible" type="text" class="appearance-none border rounded w-full py-2 px-3" [(ngModel)]="password" name="password" (input)="updateButtonStatus()" />
-            <button type="button" class="absolute top-0 right-0 mt-2 mr-3" (click)="togglePasswordVisibility()">
-              <i class="far" [ngClass]="{'fa-eye-slash': isPasswordVisible, 'fa-eye': !isPasswordVisible}"></i>
-            </button>
-          </div>
-        </div>
-  
         <button type="button" class="bg-primary-500 text-white py-2 px-4 rounded" [disabled]="!isUpdateButtonEnabled" [class.bg-gray-300]="!isUpdateButtonEnabled" [class.bg-blue-500]="isUpdateButtonEnabled" (click)="updateEmployeeDetails()">Update Details</button>
         <button type="button" class="bg-red-500 text-white py-2 px-4 rounded ml-2" (click)="deleteEmployee()">Delete Employee</button>
       </div>
