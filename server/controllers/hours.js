@@ -87,17 +87,24 @@ const fetchAllUsersAttendance = async (req, res) => {
 const calculateAttendance = async (user) => {
   try {
     const userId = user._id;
-    const fromDate = user.joiningDate;
+    const currentYear = new Date().getFullYear();
+
+    const fromDate = new Date(`January 1, ${currentYear}`);
     const toDate = new Date();
 
     const joiningDate = new Date(user.joiningDate);
 
     const probationEndDate = new Date(joiningDate);
     probationEndDate.setMonth(joiningDate.getMonth() + 3);
-    
-    const formattedProbationEndDate = user.probationEndDate ? new Date(user.probationEndDate) : probationEndDate;
 
-    const attendanceRecords = await Attendance.find({ user: userId, date: { $gte: fromDate, $lte: toDate } });
+    const formattedProbationEndDate = user.probationEndDate
+      ? new Date(user.probationEndDate)
+      : probationEndDate;
+
+    const attendanceRecords = await Attendance.find({
+      user: userId,
+      date: { $gte: fromDate, $lte: toDate },
+    });
 
     const allDates = [];
     let currentDate = new Date(fromDate);
@@ -108,18 +115,22 @@ const calculateAttendance = async (user) => {
     }
 
     allDates.forEach((date) => {
-      const existingRecord = attendanceRecords.find((record) => record.date.toDateString() === date.toDateString());
+      const existingRecord = attendanceRecords.find(
+        (record) => record.date.toDateString() === date.toDateString()
+      );
 
       if (!existingRecord) {
         const defaultRecordExists = attendanceRecords.some(
-          (record) => record.date.toDateString() === date.toDateString() && record.status === 'absent'
+          (record) =>
+            record.date.toDateString() === date.toDateString() &&
+            record.status === 'absent'
         );
 
         if (!defaultRecordExists) {
           attendanceRecords.push({
             user: userId,
             date: date,
-            status: 'present', 
+            status: 'present',
           });
         }
       }
@@ -131,6 +142,7 @@ const calculateAttendance = async (user) => {
     let daysCasual = 0;
     let daysPto = 0;
     let daysHalfday = 0;
+    let calculatedPTO = 0;
 
     attendanceRecords.forEach((record) => {
       const dayOfWeek = record.date.getDay();
@@ -159,6 +171,27 @@ const calculateAttendance = async (user) => {
       }
     });
 
+    const annualPTO = 15;
+    const totalWorkingDaysPerYear = 252;
+    const PTOperday = annualPTO / totalWorkingDaysPerYear;
+
+    let workingDaysBetween = 0;
+    let currentDateForCalculation = new Date(`January 1, ${currentYear}`);
+
+    if (currentDateForCalculation > formattedProbationEndDate) {
+      while (currentDateForCalculation <= toDate) {
+        const dayOfWeek = currentDateForCalculation.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          workingDaysBetween++;
+        }
+        currentDateForCalculation.setDate(currentDateForCalculation.getDate() + 1);
+      }
+    
+      calculatedPTO = PTOperday * workingDaysBetween;
+    } else {
+      calculatedPTO = 0; 
+    }
+
     return {
       _id: user._id,
       name: user.name,
@@ -173,10 +206,11 @@ const calculateAttendance = async (user) => {
       daysCasual,
       daysPto,
       daysHalfday,
+      calculatedPTO,
     };
   } catch (error) {
     console.error(error);
-    throw new Error("Error calculating attendance");
+    throw new Error('Error calculating attendance');
   }
 };
 
