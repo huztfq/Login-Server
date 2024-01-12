@@ -10,6 +10,7 @@ export interface IUser {
   probationEndDate: Date;
   daysSick: number;
   daysCasual: number;
+  calculatedPTO: number;
   role: string;
 }
 
