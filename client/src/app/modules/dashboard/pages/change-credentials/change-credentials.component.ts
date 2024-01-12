@@ -16,7 +16,6 @@ import { NgZone } from '@angular/core';
     newPassword: string = '';
     confirmPassword: string = '';
     originalEmployeeDetails: any = {};
-  route: any;
   
     constructor(
       private dashboardService: DashboardService,
@@ -40,7 +39,7 @@ import { NgZone } from '@angular/core';
     }
   
     updateEmail() {
-      if (this.newEmail && this.newEmail !== this.originalEmployeeDetails.email) {
+      if (this.newEmail !== this.originalEmployeeDetails.email) {
         const requestBody = { email: this.newEmail };
   
         this.dashboardService.updateEmployeeDetailsById(this.authService.getUserData()?.userId ?? '', requestBody).subscribe(
@@ -55,7 +54,7 @@ import { NgZone } from '@angular/core';
     }
   
     updatePassword() {
-      if (this.newPassword && this.newPassword === this.confirmPassword) {
+      if (this.newPassword === this.confirmPassword) {
         const requestBody = { password: this.newPassword };
     
         this.dashboardService.updateEmployeeDetailsById(this.authService.getUserData()?.userId ?? '', requestBody).subscribe(
