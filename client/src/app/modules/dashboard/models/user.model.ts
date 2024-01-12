@@ -11,6 +11,7 @@ export interface IUser {
   daysSick: number;
   daysCasual: number;
   calculatedPTO: number;
+  role: string;
 }
 
 export interface IUsersResponse {
