@@ -50,7 +50,6 @@ function authenticateToken(req, res, next) {
   const expirationTime = userTokenMap.get(token);
 
   if (!expirationTime || expirationTime < Math.floor(Date.now() / 1000)) {
-    console.log("Token expired or invalid");
     return res.status(401).json({ error: "Unauthorized - Token expired or invalid." });
   }
   next();

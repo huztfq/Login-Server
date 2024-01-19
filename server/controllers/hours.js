@@ -172,25 +172,25 @@ const calculateAttendance = async (user) => {
     });
 
     const annualPTO = 15;
-    const totalWorkingDaysPerYear = 252;
+    const totalWorkingDaysPerYear = 260;
     const PTOperday = annualPTO / totalWorkingDaysPerYear;
 
     let workingDaysBetween = 0;
-    let currentDateForCalculation = new Date(`January 1, ${currentYear}`);
+    let currentDateForCalculation = new Date();
 
     if (currentDateForCalculation > formattedProbationEndDate) {
-      while (currentDateForCalculation <= toDate) {
-        const dayOfWeek = currentDateForCalculation.getDay();
+      calculatedPTO = 15; 
+    } else {
+      let dateIterator = new Date(formattedProbationEndDate);
+      while (dateIterator.getFullYear() === currentYear) {
+        const dayOfWeek = dateIterator.getDay();
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
           workingDaysBetween++;
         }
-        currentDateForCalculation.setDate(currentDateForCalculation.getDate() + 1);
+        dateIterator.setDate(dateIterator.getDate() + 1);
       }
-    
-      calculatedPTO = PTOperday * workingDaysBetween;
-    } else {
-      calculatedPTO = 0; 
-    }
+      
+      calculatedPTO = PTOperday * workingDaysBetween;    }
 
     return {
       _id: user._id,
