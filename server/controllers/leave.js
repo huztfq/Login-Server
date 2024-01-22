@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Attendance = require('../models/attendance');
 
 const createSickLeave = async (req, res) => {
+  let workingDays = 0;
   try {
     const { userId } = req.params;
     const { startDate, endDate, status, message, multipleDates } = req.body;
