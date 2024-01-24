@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
-    "build": "ng build",
+    "build": "yarn run ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prettier": "prettier --config ./.prettierrc --write \"src/{app,environments}/**/*{.ts,.html,.scss,.json}\"",
@@ -34,7 +34,7 @@
     "zone.js": "~0.14.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.0.0",
+    "@angular-devkit/build-angular": "^16.2.11",
     "@angular/cli": "^17.0.0",
     "@angular/compiler-cli": "^17.0.1",
     "@types/jasmine": "~3.10.0",
