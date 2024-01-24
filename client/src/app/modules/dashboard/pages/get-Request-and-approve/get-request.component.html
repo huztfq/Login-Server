@@ -1,21 +1,22 @@
 <!-- get-request.component.html -->
 
-<div class="max-w-4xl mx-auto p-6 bg-white rounded-md shadow-md m-4 mb-6">
+<div class="max-w-6xl mx-auto p-6 bg-white rounded-md shadow-md m-4 mb-6">
   <h2 class="text-3xl font-bold mb-6 text-center">Leave Requests</h2>
 
-  <table class="w-full table-fixed">
+  <table class="w-full">
     <thead>
-      <tr class="border-b-2">
-        <th class="w-1/7 py-3 mr-1.5">Name</th>
-        <th class="w-1/7 py-3 mr-1.5">Request Date</th>
-        <th class="w-1/7 py-3 mr-1.5">Start Date</th>
-        <th class="w-1/7 py-3 mr-1.5">End Date</th>
-        <th class="w-1/7 py-3 mr-1.5">Leave Days</th>
-        <th class="w-1/7 py-3 mr-1.5">Leave Type</th>
-        <th class="w-1/7 py-3 mr-1.5">Message</th>
-        <th class="w-1/7 py-3 mr-1.5">Action</th>
+      <tr class="border-b-2 text-justify">
+        <th class="w-1/8 py-3 mr-1.5">Name</th>
+        <th class="w-1/6 py-3 mr-1.5">Request Date</th>
+        <th class="w-1/8 py-3 mr-1.5">Start Date</th>
+        <th class="w-1/8 py-3 mr-1.5">End Date</th>
+        <th class="w-1/8 py-3 mr-1.5">Leave Days</th>
+        <th class="w-1/8 py-3 mr-1.5">Leave Type</th>
+        <th class="w-1/8 py-3 mr-1.5">Message</th>
+        <th class="w-1/8 py-3 mr-1.5">Action</th>
       </tr>
     </thead>
+    
     <tbody>
       <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
         <tr *ngFor="let request of leaveRequests" class="border-b">
@@ -34,8 +35,8 @@
       </ng-container>
       <ng-template #noData>
         <tr>
-          <td class="py-2 mr-1.5" colspan="7">-- No data available --</td>
-        </tr>
+          <td class="py-2 text-center w-full" colspan="7">-- No data available --</td>
+      </tr>
       </ng-template>
     </tbody>
   </table>

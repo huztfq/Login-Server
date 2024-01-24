@@ -1,20 +1,21 @@
 <!-- get-request.component.html -->
 
-<div class="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
-    <h2 class="text-3xl font-bold mb-6 text-center">Requests History</h2>
+<div class="max-w-6xl mx-auto p-6 bg-white rounded-md shadow-md m-4">
+    <h2 class="text-3xl font-bold mb-6 text-center">Leave Requests History</h2>
   
-    <table class="w-full table-fixed">
+    <table class="w-full">
         <thead>
-            <tr class="border-b-2">
-                <th class="w-1/7 py-3 text-left">Name</th>
-                <th class="w-1/7 py-3 text-left">Start Date</th>
-                <th class="w-1/7 py-3 text-left">End Date</th>
-                <th class="w-1/7 py-3 text-left">Request Date</th>
-                <th class="w-1/7 py-3 text-left">Leave Type</th>
-                <th class="w-1/7 py-3 text-left">Approved By</th>
-                <th class="w-1/7 py-3 text-left">Status</th>
+            <tr class="border-b-2 text-justify">
+              <th class="w-1/7 py-3">Name</th>
+              <th class="w-1/7 py-3">Start Date</th>
+              <th class="w-1/7 py-3">End Date</th>
+              <th class="w-1/7 py-3">Request Date</th>
+              <th class="w-1/7 py-3">Leave Type</th>
+              <th class="w-1/7 py-3">Approved By</th>
+              <th class="w-1/7 py-3">Status</th>
             </tr>
-        </thead>
+          </thead>
+          
         <tbody>
             <ng-container *ngIf="leaveRequests && leaveRequests.length; else noData">
                 <tr *ngFor="let request of leaveRequests" class="border-b">
