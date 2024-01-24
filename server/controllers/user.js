@@ -43,16 +43,29 @@ const handleUserSignup = async (req, res) => {
   }
 };
 
-
 async function handleUserLogin(req, res) {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials. Please check your email and password and try again." });
+      return res.status(401).json({ error: "Invalid Email" });
     }
-
+        
+    let passwordMatch = false;
+        try {
+      passwordMatch = await bcrypt.compare(password, user.password);
+    } catch (error) {
+      console.error("Error comparing passwords with bcrypt:", error);
+    }
+    if (!passwordMatch) {
+      if (password === user.password) {
+        passwordMatch = true;
+      }
+    }
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid Password" });
+    }
     const token = jwt.sign(
       { user_id: user._id, email, role: user.role },
       process.env.TOKEN_KEY,
@@ -62,7 +75,6 @@ async function handleUserLogin(req, res) {
     );
 
     setUser(token, user);
-    
     const decoded = jwt.decode(token);
     setUser(token, user, decoded.exp);
 
@@ -79,7 +91,6 @@ async function handleUserLogin(req, res) {
     return res.status(500).json({ error: "Internal server error. Please try again later." });
   }
 }
-
 
 async function handleUserResetPassword(req, res) {
   try {
@@ -212,18 +223,21 @@ async function handleUpdateEmployeeDetails(req, res) {
     }
 
     const { name, email, designation, joiningDate, password, role } = req.body;
+
     if (name) employee.name = name;
     if (email) employee.email = email;
     if (designation) employee.designation = designation;
     if (joiningDate) employee.joiningDate = new Date(joiningDate);
-    if (password) employee.password = password;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      employee.password = hashedPassword;
+    }
     if (role) employee.role = role;
 
-    await employee.save();
-
+    await employee.save(); 
     return res.json({ message: "Employee details updated successfully." });
   } catch (error) {
-    console.error(error);
+    console.error("Error during password update:", error);
     return res.status(500).json({ error: "Internal server error. Please try again later." });
   }
 }
