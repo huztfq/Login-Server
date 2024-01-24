@@ -6,7 +6,9 @@ const { setUser } = require("../service/auth");
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.EMAIL_HOST,
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -110,60 +112,6 @@ async function handleUserResetPassword(req, res) {
   }
 }
 
-
-async function handleUserForgotPassword(req, res) {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000);
-
-    user.resetPasswordOTP = otp;
-    await user.save();
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Password Reset OTP",
-      text: `Your OTP for password reset is: ${otp}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    return res.json({ message: "OTP sent successfully." });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error. Please try again later." });
-  }
-}
-
-async function handleUserLogout(req, res) {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized - No token provided." });
-    }
-
-    jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "Unauthorized - Invalid token." });
-      }
-
-
-      return res.json({ message: "User logged out successfully." });
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error. Please try again later." });
-  }
-}
-
 async function handleInfo(req, res) {
   res.send('Welcome to Avrox');
 }
@@ -250,16 +198,70 @@ async function handleDeleteEmployee(req, res) {
   }
 }
 
+async function handleForgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const otpExpires = Date.now() + 600000; 
+
+    user.otp = otp.toString();
+    user.otpExpires = new Date(otpExpires);
+    await user.save();
+
+    const mailOptions = {
+      to: user.email,
+      subject: 'Password Reset OTP',
+      text: `Welcome to PTO Portal!\n\n` +
+            `Your one-time password (OTP) for password reset is: ${otp}.\n\n` +
+            `Feel free to reach out if you have any questions or need assistance.\n\n` +
+            `Best regards,\nAvrox Solutions`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'Password reset OTP sent' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+async function handleVerifyOTP(req, res) {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({
+      email,
+      otp,
+      otpExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired OTP' });
+    }
+
+    res.status(200).json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
 module.exports = {
   handleUserSignup,
   handleUserLogin,
   handleUserResetPassword,
-  handleUserForgotPassword,
-  handleUserLogout,
   handleInfo,
   handleDeleteEmployees,
   handleFetchEmployeeDetails,
   handleUpdateEmployeeDetails,
   handleDeleteEmployee,
+  handleForgotPassword,
+  handleVerifyOTP,
 };
