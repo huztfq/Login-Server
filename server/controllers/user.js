@@ -53,18 +53,16 @@ async function handleUserLogin(req, res) {
     }
         
     let passwordMatch = false;
-        try {
+    try {
       passwordMatch = await bcrypt.compare(password, user.password);
-    } catch (error) {
-      console.error("Error comparing passwords with bcrypt:", error);
-    }
-    if (!passwordMatch) {
-      if (password === user.password) {
+      if (!passwordMatch && password === user.password) {
         passwordMatch = true;
       }
-    }
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid Password" });
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Invalid Password" });
+      }
+    } catch (error) {
+      console.error("Error comparing passwords with bcrypt:", error);
     }
     const token = jwt.sign(
       { user_id: user._id, email, role: user.role },
