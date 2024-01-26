@@ -40,34 +40,52 @@ import { NgZone } from '@angular/core';
   
     updateEmail() {
       if (this.newEmail !== this.originalEmployeeDetails.email) {
-        const requestBody = { email: this.newEmail };
-  
-        this.dashboardService.updateEmployeeDetailsById(this.authService.getUserData()?.userId ?? '', requestBody).subscribe(
-          (response: any) => {
-            this.router.navigate(['dashboard/home']);
-          },
-          (error) => {
-            console.error('Error updating email:', error);
-          }
-        );
+        if (this.validateEmail(this.newEmail)) {
+          const requestBody = { email: this.newEmail };
+    
+          this.dashboardService.updateEmployeeDetailsById(this.authService.getUserData()?.userId ?? '', requestBody).subscribe(
+            (response: any) => {
+              this.router.navigate(['dashboard/home']);
+            },
+            (error) => {
+              console.error('Error updating email:', error);
+            }
+          );
+        } else {
+          console.error('Invalid email format.');
+        }
       }
     }
-  
+    
+    validateEmail(email: string): boolean {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+    
     updatePassword() {
       if (this.newPassword === this.confirmPassword) {
-        const requestBody = { password: this.newPassword };
+        if (this.validatePassword(this.newPassword)) {
+          const requestBody = { password: this.newPassword };
     
-        this.dashboardService.updateEmployeeDetailsById(this.authService.getUserData()?.userId ?? '', requestBody).subscribe(
-          (response: any) => {
-            this.authService.clearUserData();
-            this.router.navigate(['signin']); 
-          },
-          (error) => {
-            console.error('Error updating password:', error);
-          }
-        );
+          this.dashboardService.updateEmployeeDetailsById(this.authService.getUserData()?.userId ?? '', requestBody).subscribe(
+            (response: any) => {
+              this.authService.clearUserData();
+              this.router.navigate(['signin']);
+            },
+            (error) => {
+              console.error('Error updating password:', error);
+            }
+          );
+        } else {
+          console.error('Password does not meet the requirements.');
+        }
       } else {
         console.error('Password and Confirm Password do not match.');
       }
+    }
+    
+    validatePassword(password: string): boolean {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return passwordRegex.test(password);
     }
   }
